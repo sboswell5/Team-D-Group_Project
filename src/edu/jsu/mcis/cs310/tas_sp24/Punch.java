@@ -5,13 +5,14 @@ import java.time.*;
 // Working on this
 public class Punch {
     
-private final int terminalId, id; // fix id issue
+private final int terminalId; // fix id issue
+    private int id;
 private final Badge badge;
 private final EventType punchType;
-private final LocalDateTime originalTimestamp;
+private LocalDateTime originalTimestamp;
 
-    public Punch(int terminalId, Badge badge, EventType punchType, int id) {
-        
+    public Punch(int terminalId, Badge badge, EventType punchType) {
+
         this.terminalId = terminalId;
         this.badge = badge;
         this.punchType = punchType;
