@@ -9,8 +9,8 @@ import java.time.format.DateTimeFormatter;
 public class Main {
 
     public static void main(String[] args) {
-        
-        // test database connectivity; get DAOs
+        //:)
+        // test database connectivity; get DAOs 
 
         DAOFactory daoFactory = new DAOFactory("tas.jdbc");
         BadgeDAO badgeDAO = daoFactory.getBadgeDAO();
@@ -25,7 +25,7 @@ public class Main {
         
         // Testing the commit & push! - Madelyn
         // Testing the commit & push! - Kris
-
+        //testing testing!!! 123 -shelby!
     }
 
 }
