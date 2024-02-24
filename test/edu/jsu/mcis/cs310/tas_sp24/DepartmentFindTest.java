@@ -1,5 +1,6 @@
 package edu.jsu.mcis.cs310.tas_sp24;
 
+import edu.jsu.mcis.cs310.tas_sp24.dao.DepartmentDAO;
 import edu.jsu.mcis.cs310.tas_sp24.dao.*;
 import org.junit.*;
 import static org.junit.Assert.*;
