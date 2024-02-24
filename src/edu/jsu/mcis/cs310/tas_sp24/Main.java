@@ -14,14 +14,18 @@ public class Main {
 
         DAOFactory daoFactory = new DAOFactory("tas.jdbc");
         BadgeDAO badgeDAO = daoFactory.getBadgeDAO();
+        DepartmentDAO departmentDAO = daoFactory.getDepartmentDAO();
         
         // find badge
 
         Badge b = badgeDAO.find("C4F37EFF");
         
         //  find department
+        for(int i = 1; i<=10 ; i++) {
+            Department d = departmentDAO.find(String.valueOf(i));
+            System.err.println("Test Department: " + d.toString());
+        }
         
-        //Department test = DepartmentDAO.find();
         
         // output should be "Test Badge: #C4F37EFF (Welch, Travis C)"
         
