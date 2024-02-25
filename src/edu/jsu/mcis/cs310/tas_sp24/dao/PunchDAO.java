@@ -1,12 +1,21 @@
 package edu.jsu.mcis.cs310.tas_sp24.dao;
 
 import edu.jsu.mcis.cs310.tas_sp24.Punch;
+import edu.jsu.mcis.cs310.tas_sp24.Badge;
+import edu.jsu.mcis.cs310.tas_sp24.EventType;
+import java.time.*;
 import java.sql.*;
 
-// Working on this
-public class PunchDAO {
+/* Working on this
+// CURRENT ISSUE:
+// EXPECTED: #D2C39273 CLOCK IN: [WED 09/05/2018 ]07:00:07
+// GETTING: #D2C39273 CLOCK IN: [2018-09-05T]07:00:07 ... need to figure out
+// could be either Punch.java or PunchDAO.java issue?
+*/
 
-    private static final String QUERY_FIND = "SELECT * FROM badge WHERE id = ?";
+public class PunchDAO {
+    
+    private static final String QUERY_FIND = "SELECT * FROM event WHERE id = ?";
 
     private final DAOFactory daoFactory;
 
@@ -15,10 +24,9 @@ public class PunchDAO {
         this.daoFactory = daoFactory;
     }
 
-    public Punch find(String id) {
+    public Punch find(int id) {
 
         Punch punch = null;
-
         PreparedStatement ps = null;
         ResultSet rs = null;
 
@@ -29,7 +37,7 @@ public class PunchDAO {
             if (conn.isValid(0)) {
 
                 ps = conn.prepareStatement(QUERY_FIND);
-                ps.setString(1, id);
+                ps.setInt(1, id);
 
                 boolean hasresults = ps.execute();
 
@@ -39,12 +47,34 @@ public class PunchDAO {
 
                     while (rs.next()) {
 
-                        //punch = new Punch;
-
-                    }
-
+                        int terminalId = rs.getInt("terminalid");
+                        String badgeId = rs.getString("badgeid");
+                        Badge badge = new BadgeDAO(daoFactory).find(badgeId);
+                        LocalDateTime originalTimestamp = rs.getTimestamp("timestamp").toLocalDateTime();
+                        int eventType = rs.getInt("eventtypeid");
+                        EventType punchType = null;
+                        
+                        switch (eventType) {
+                            
+                            case 0:
+                                
+                                punchType = EventType.CLOCK_OUT;
+                                break;
+                                
+                            case 1:
+                                
+                                punchType = EventType.CLOCK_IN;
+                                break;
+                                
+                            case 2:
+                                
+                                punchType = EventType.TIME_OUT;
+                                break;
+                        }
+                
+                        punch = new Punch(id, terminalId, badge, originalTimestamp, punchType);
+                    } 
                 }
-
             }
 
         } catch (SQLException e) {

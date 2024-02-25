@@ -20,16 +20,15 @@ public class Main {
 
         Badge b = badgeDAO.find("C4F37EFF");
         
-        //  find department
-        for(int i = 1; i<=10 ; i++) {
-            Department d = departmentDAO.find(String.valueOf(i));
-            System.err.println("Test Department: " + d.toString());
-        }
-        
+        System.err.println("Test Badge: " + b.toString());
         
         // output should be "Test Badge: #C4F37EFF (Welch, Travis C)"
         
-        System.err.println("Test Badge: " + b.toString());
+        //  find department
+        for(int i = 1; i <= 10 ; i++) {
+            Department d = departmentDAO.find(String.valueOf(i));
+            System.err.println("Test Department: " + d.toString());
+        }
         
         // Testing the commit & push! - Madelyn
         // Testing the commit & push! - Kris
