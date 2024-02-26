@@ -1,13 +1,9 @@
 package edu.jsu.mcis.cs310.tas_sp24;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 
-/* Working on this
-// CURRENT ISSUE:
-// EXPECTED: #D2C39273 CLOCK IN: [WED 09/05/2018 ]07:00:07
-// GETTING: #D2C39273 CLOCK IN: [2018-09-05T]07:00:07 ... need to figure out
-// could be either Punch.java or PunchDAO.java issue?
-*/
+// Finished printOriginal();
 
 public class Punch {
     
@@ -62,25 +58,32 @@ private PunchAdjustmentType adjustmentType;
     public String printOriginal() {
 
         StringBuilder s = new StringBuilder();
-
+        
+        // Get the time in the correct format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
+        String formattedDate = originalTimestamp.format(formatter);
+        
+        // Capitalize the abbreviated day
+        formattedDate = formattedDate.substring(0, 3).toUpperCase() + formattedDate.substring(3);
+        
         switch (punchType) {
             
             case CLOCK_OUT:
                 
                 s.append('#').append(badge.getId()).append(' ');
-                s.append(EventType.CLOCK_OUT).append(": ").append(originalTimestamp);
+                s.append(EventType.CLOCK_OUT).append(": ").append(formattedDate);
                 break;
                 
             case CLOCK_IN:
                 
                 s.append('#').append(badge.getId()).append(' ');
-                s.append(EventType.CLOCK_IN).append(": ").append(originalTimestamp);
+                s.append(EventType.CLOCK_IN).append(": ").append(formattedDate);
                 break;
                 
             case TIME_OUT:
                 
                 s.append('#').append(badge.getId()).append(' ');
-                s.append(EventType.TIME_OUT).append(": ").append(originalTimestamp);
+                s.append(EventType.TIME_OUT).append(": ").append(formattedDate);
                 break;
         }
        

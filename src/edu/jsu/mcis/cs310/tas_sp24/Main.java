@@ -15,6 +15,7 @@ public class Main {
         DAOFactory daoFactory = new DAOFactory("tas.jdbc");
         BadgeDAO badgeDAO = daoFactory.getBadgeDAO();
         DepartmentDAO departmentDAO = daoFactory.getDepartmentDAO();
+        PunchDAO punchDAO = daoFactory.getPunchDAO();
         
         // find badge
 
@@ -29,6 +30,11 @@ public class Main {
             Department d = departmentDAO.find(String.valueOf(i));
             System.err.println("Test Department: " + d.toString());
         }
+        
+        // find punch
+        
+        Punch p = punchDAO.find(147);
+        System.err.println("Test Punch: " + p.toString());
         
         // Testing the commit & push! - Madelyn
         // Testing the commit & push! - Kris

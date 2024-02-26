@@ -6,12 +6,7 @@ import edu.jsu.mcis.cs310.tas_sp24.EventType;
 import java.time.*;
 import java.sql.*;
 
-/* Working on this
-// CURRENT ISSUE:
-// EXPECTED: #D2C39273 CLOCK IN: [WED 09/05/2018 ]07:00:07
-// GETTING: #D2C39273 CLOCK IN: [2018-09-05T]07:00:07 ... need to figure out
-// could be either Punch.java or PunchDAO.java issue?
-*/
+// Finished find();
 
 public class PunchDAO {
     
