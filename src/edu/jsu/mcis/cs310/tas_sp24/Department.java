@@ -2,16 +2,16 @@ package edu.jsu.mcis.cs310.tas_sp24;
 
 public class Department {
 
-    private final String id;
+    private final int id;
     private String terminalid, description;
     
-    public Department(String id, String description, String terminalid) {
+    public Department(int id, String description, String terminalid) {
         this.id = id;
         this.description = description;
         this.terminalid = terminalid;
     }
     
-    public String getId() {
+    public int getId() {
         return id;
     }
     
@@ -30,9 +30,8 @@ public class Department {
 
         s.append('#').append(id).append(' ');
         s.append('(').append(description).append(')');
-        s.append('(').append(terminalid).append(')');
+        s.append(", Terminal ID: ").append(terminalid);
         
-
         return s.toString();
     
     }

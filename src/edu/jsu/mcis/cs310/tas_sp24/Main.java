@@ -27,9 +27,13 @@ public class Main {
         
         //  find department
         for(int i = 1; i <= 10 ; i++) {
-            Department d = departmentDAO.find(String.valueOf(i));
+            Department d = departmentDAO.find(i);
             System.err.println("Test Department: " + d.toString());
         }
+        
+        Department d1 = departmentDAO.find(8);
+        System.err.println("Test Department: " + d1.toString());
+        
         
         // find punch
         

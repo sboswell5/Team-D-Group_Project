@@ -15,7 +15,7 @@ public class DepartmentDAO {
         
     }
     
-    public Department find(String id) {
+    public Department find(int id) {
         
         Department department = null;
         
@@ -29,7 +29,7 @@ public class DepartmentDAO {
             if (conn.isValid(0)) {
 
                 ps = conn.prepareStatement(QUERY_FIND);
-                ps.setString(1, id);
+                ps.setInt(1, id);
 
                 boolean hasresults = ps.execute();
 
