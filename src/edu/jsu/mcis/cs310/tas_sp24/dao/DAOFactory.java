@@ -41,6 +41,11 @@ public final class DAOFactory {
         return new PunchDAO(this);
     }
     
+    // Added this with addition of ShiftDAO
+    public ShiftDAO getShiftDAO() {
+        return new ShiftDAO(this);
+    }
+    
     public DepartmentDAO getDepartmentDAO(){
         return new DepartmentDAO(this);
     }

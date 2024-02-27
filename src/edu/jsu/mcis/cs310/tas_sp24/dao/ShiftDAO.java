@@ -3,14 +3,17 @@ package edu.jsu.mcis.cs310.tas_sp24.dao;
 import edu.jsu.mcis.cs310.tas_sp24.Badge;
 import edu.jsu.mcis.cs310.tas_sp24.Shift;
 import java.sql.*;
+import java.time.*;
+import java.util.HashMap;
 
 public class ShiftDAO {
 
-    private static final String QUERY_FIND = "SELECT * FROM badge WHERE id = ?";
+    private static final String QUERY_FIND = "SELECT * FROM shift WHERE id = ?";
+    private static final String QUERY_FIND2 = "SELECT * FROM employee WHERE badgeid = ?";
 
     private final DAOFactory daoFactory;
 
-    ShiftDAO(DAOFactory daoFactory) {
+    ShiftDAO(DAOFactory daoFactory) { 
 
         this.daoFactory = daoFactory;
 
@@ -39,8 +42,34 @@ public class ShiftDAO {
                     rs = ps.getResultSet();
 
                     while (rs.next()) {
-
-                        // stuff
+                        HashMap<String, String> shiftSet = new HashMap<>();
+                        
+                        shiftSet.put("id", ((Integer) id).toString());
+                        shiftSet.put("description", rs.getString("description"));
+                        
+                        LocalTime shiftStart = rs.getTime("shiftstart").toLocalTime();
+                        LocalTime shiftStop = rs.getTime("shiftstop").toLocalTime();
+                        
+                        shiftSet.put("shiftStart", shiftStart.toString());
+                        shiftSet.put("shiftStop", shiftStop.toString());
+                        
+                        shiftSet.put("roundInterval", ((Integer) rs.getInt("roundinterval")).toString());
+                        shiftSet.put("gracePeriod", ((Integer) rs.getInt("graceperiod")).toString());
+                        shiftSet.put("dockPenalty", ((Integer) rs.getInt("dockpenalty")).toString());
+                        
+                        LocalTime lunchStart = rs.getTime("lunchstart").toLocalTime();
+                        LocalTime lunchStop = rs.getTime("lunchstop").toLocalTime();
+                        
+                        shiftSet.put("lunchStart", lunchStart.toString());
+                        shiftSet.put("lunchStop", lunchStop.toString());
+                        shiftSet.put("lunchThreshold", ((Integer) rs.getInt("lunchthreshold")).toString());
+                        
+                        Duration shiftDuration = Duration.between(shiftStart, shiftStop);
+                        Duration lunchDuration = Duration.between(lunchStart, lunchStop);
+                        shiftSet.put("shiftDuration", shiftDuration.toString());
+                        shiftSet.put("lunchDuration", lunchDuration.toString());
+                        
+                        shift = new Shift(shiftSet);
                     }
 
                 }
@@ -87,7 +116,7 @@ public class ShiftDAO {
 
             if (conn.isValid(0)) {
 
-                ps = conn.prepareStatement(QUERY_FIND);
+                ps = conn.prepareStatement(QUERY_FIND2);
                 ps.setString(1, badge.getId());
 
                 boolean hasresults = ps.execute();
@@ -97,8 +126,8 @@ public class ShiftDAO {
                     rs = ps.getResultSet();
 
                     while (rs.next()) {
-
-                        // stuff
+                        
+                        shift = find(rs.getInt("shiftid"));
                     }
 
                 }
