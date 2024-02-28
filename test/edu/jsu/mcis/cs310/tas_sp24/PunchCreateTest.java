@@ -27,7 +27,7 @@ public class PunchCreateTest {
 
         /* Create New Punch Object */
         
-        Punch p1 = new Punch(103, badgeDAO.find("021890C0"), EventType.CLOCK_IN, 0);
+        Punch p1 = new Punch(103, badgeDAO.find("021890C0"), EventType.CLOCK_IN);
 
         /* Create Timestamp Objects */
         
