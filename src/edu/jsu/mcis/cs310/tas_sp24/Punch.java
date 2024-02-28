@@ -14,6 +14,7 @@ private final EventType punchType;
 private LocalDateTime originalTimestamp, adjustedTimestamp;
 private PunchAdjustmentType adjustmentType;
 
+    // Minimal constructor for Punch objects
     public Punch(int terminalId, Badge badge, EventType punchType) {
 
         this.terminalId = terminalId;
@@ -21,6 +22,7 @@ private PunchAdjustmentType adjustmentType;
         this.punchType = punchType;
     }
     
+    // Constructor for existing punches
     public Punch(int id, int terminalId, Badge badge, LocalDateTime originalTimestamp, EventType punchType) {
         
         this.id = id;
@@ -29,8 +31,8 @@ private PunchAdjustmentType adjustmentType;
         this.originalTimestamp = originalTimestamp;
         this.punchType = punchType; 
     }
-
-    public int getTerminalId() {
+    
+    public int getTerminalid() {
         
         return terminalId;
     }
@@ -45,12 +47,12 @@ private PunchAdjustmentType adjustmentType;
         return badge;
     }
     
-    public EventType getPunchType() {
+    public EventType getPunchtype() {
         
         return punchType;
     }
     
-    public LocalDateTime OriginalTimestamp() {
+    public LocalDateTime getOriginaltimestamp() {
         
         return originalTimestamp;
     }

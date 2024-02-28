@@ -2,6 +2,7 @@ package edu.jsu.mcis.cs310.tas_sp24.dao;
 
 import edu.jsu.mcis.cs310.tas_sp24.Punch;
 import edu.jsu.mcis.cs310.tas_sp24.Badge;
+import edu.jsu.mcis.cs310.tas_sp24.Department;
 import edu.jsu.mcis.cs310.tas_sp24.EventType;
 import java.time.*;
 import java.sql.*;
@@ -96,7 +97,27 @@ public class PunchDAO {
         }
 
         return punch;
-
     }
-
+    
+    // working on
+    public Punch create(Punch punch) {
+        
+        //Department department = null;
+        int punchTerminalId = punch.getTerminalid();
+        //int departmentTerminalid = department.getTerminalid();
+        
+        // check if new terminalId punch matches the terminalId for an employee's department
+        
+            //if no, return 0
+            // if yes, insert punch into event table
+                // if insert fails, return 0
+        
+        // after that, retrieve numeric id of the new punch & return as int
+        
+        // IF TERMINALID IS 0: punch is authorized
+        
+        return punch;
+        
+    }
+    
 }

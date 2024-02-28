@@ -37,7 +37,7 @@ public class Main {
         
         // find punch
         
-        Punch p = punchDAO.find(147);
+        Punch p = punchDAO.find(236);
         System.err.println("Test Punch: " + p.toString());
         
         // Testing the commit & push! - Madelyn
