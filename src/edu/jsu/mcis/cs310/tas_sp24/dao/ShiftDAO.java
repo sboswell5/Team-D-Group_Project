@@ -65,6 +65,11 @@ public class ShiftDAO {
                         shiftSet.put("lunchThreshold", ((Integer) rs.getInt("lunchthreshold")).toString());
                         
                         Duration shiftDuration = Duration.between(shiftStart, shiftStop);
+                        if(shiftDuration.isNegative()) {
+                            LocalTime posDuration = shiftStart.minus(shiftDuration);
+                            shiftDuration = Duration.between(posDuration, shiftStart);
+                        }
+                        
                         Duration lunchDuration = Duration.between(lunchStart, lunchStop);
                         shiftSet.put("shiftDuration", shiftDuration.toString());
                         shiftSet.put("lunchDuration", lunchDuration.toString());
