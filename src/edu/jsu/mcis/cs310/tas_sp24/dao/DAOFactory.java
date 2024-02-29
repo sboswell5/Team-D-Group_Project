@@ -50,4 +50,8 @@ public final class DAOFactory {
         return new DepartmentDAO(this);
     }
 
+    public EmployeeDAO getEmployeeDAO() {
+        return new EmployeeDAO(this, getShiftDAO(), getDepartmentDAO(), getBadgeDAO());
+    }
+
 }
