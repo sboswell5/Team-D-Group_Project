@@ -58,15 +58,8 @@ public class Employee {
 
     @Override
     public String toString() {
-        return "Employee{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", middleName='" + middleName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", active=" + active +
-                ", shift=" + shift +
-                ", badge=" + badge +
-                ", department=" + department +
-                '}';
+        return "ID #" + id + ": " + lastName +  ", " + firstName + " " + middleName +
+                " (" + badge.getId() + ", Type: " + type.toString() + ", Department: " +
+                department.getDescription() + ", Active: " + active.toString();
     }
 }
