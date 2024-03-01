@@ -59,7 +59,7 @@ public class Employee {
     @Override
     public String toString() {
         return "ID #" + id + ": " + lastName +  ", " + firstName + " " + middleName +
-                " (" + badge.getId() + ", Type: " + type.toString() + ", Department: " +
-                department.getDescription() + ", Active: " + active.toString();
+                " (" + badge.getId() + ", Type: " + getType() + ", Department: " +
+                getDepartment() + ", Active: " + getActive();
     }
 }
