@@ -3,11 +3,15 @@ package edu.jsu.mcis.cs310.tas_sp24.dao;
 import edu.jsu.mcis.cs310.tas_sp24.Punch;
 import edu.jsu.mcis.cs310.tas_sp24.Badge;
 import edu.jsu.mcis.cs310.tas_sp24.Department;
+import edu.jsu.mcis.cs310.tas_sp24.Employee;
 import edu.jsu.mcis.cs310.tas_sp24.EventType;
 import java.time.*;
 import java.sql.*;
 
 // Finished find();
+// Added default case to switch
+// Added create();
+// Added insertPunch(); to go along with create();
 
 public class PunchDAO {
     
@@ -66,6 +70,11 @@ public class PunchDAO {
                                 
                                 punchType = EventType.TIME_OUT;
                                 break;
+                                
+                            // Default test - look at later?
+                            default:
+                
+                                throw new IllegalArgumentException("Unexpected punch type: " + eventType);
                         }
                 
                         punch = new Punch(id, terminalId, badge, originalTimestamp, punchType);
@@ -100,24 +109,98 @@ public class PunchDAO {
     }
     
     // working on
-    public Punch create(Punch punch) {
+    public int create(Punch punch) {
         
-        //Department department = null;
         int punchTerminalId = punch.getTerminalid();
-        //int departmentTerminalid = department.getTerminalid();
         
-        // check if new terminalId punch matches the terminalId for an employee's department
+        // If terminal ID is 0, automatically authorize new punch
+        if (punchTerminalId == 0) {
+            
+            return insertPunch(punch);
+            
+        } else {
+            
+            // Retrieve employee associated with a given badge
+            EmployeeDAO employeeDAO = daoFactory.getEmployeeDAO();
+            Employee employee = employeeDAO.find(punch.getBadge());
+
+            
+            // If employee exists, check if new terminal ID matches the designated clock terminal of the employee's department
+            if (employee != null) {
+                
+                Department employeeDepartment = employee.getDepartment();
+                int employeeTerminalId = employeeDepartment.getTerminalid();
+                
+                if (punchTerminalId == employeeTerminalId) {
+                    
+                    // Insert the punch if IDs match
+                    return insertPunch(punch);
+                }
+            }
+        }
         
-            //if no, return 0
-            // if yes, insert punch into event table
-                // if insert fails, return 0
-        
-        // after that, retrieve numeric id of the new punch & return as int
-        
-        // IF TERMINALID IS 0: punch is authorized
-        
-        return punch;
-        
+        // Return 0 if the punch fails authorization check or if an error occured during the insertion process
+        return 0;
+   
     }
     
+    private int insertPunch(Punch punch) {
+        
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+
+            Connection conn = daoFactory.getConnection();
+
+            if (conn.isValid(0)) {
+
+                ps = conn.prepareStatement("INSERT INTO event (terminalid, badgeid, timestamp, eventtypeid) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                
+                ps.setInt(1, punch.getTerminalid());
+                ps.setString(2, punch.getBadge().getId());
+                ps.setTimestamp(3, Timestamp.valueOf(punch.getOriginaltimestamp()));
+                ps.setObject(4, punch.getPunchtype());
+               
+                int rowsInserted = ps.executeUpdate();
+
+                if (rowsInserted > 0) {
+
+                    rs = ps.getGeneratedKeys();
+
+                    while (rs.next()) {
+
+                        // Return ID of new punch
+                        return rs.getInt(1);
+                    }
+                }
+            }
+                
+        } catch (SQLException e) {
+
+            throw new DAOException(e.getMessage());
+
+        } finally {
+
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }
+
+        }
+        
+        return 0;
+    }
 }
+        
+        

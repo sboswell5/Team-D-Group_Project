@@ -101,5 +101,5 @@ public class PunchFindTest {
         assertEquals("#58EB7EA1 CLOCK IN: WED 08/08/2018 06:50:52", p14.printOriginal());
         assertEquals("#76E920D9 TIME OUT: SAT 08/11/2018 00:12:35", p15.printOriginal());
     }
-    
+   
 }

@@ -4,6 +4,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 // Finished printOriginal();
+// Added default case to switch
 
 public class Punch {
     
@@ -87,6 +88,11 @@ private PunchAdjustmentType adjustmentType;
                 s.append('#').append(badge.getId()).append(' ');
                 s.append(EventType.TIME_OUT).append(": ").append(formattedDate);
                 break;
+                
+            default:
+                
+                // Default test - look at later?
+                throw new IllegalArgumentException("Unexpected punch type: " + punchType);
         }
        
         return s.toString();
