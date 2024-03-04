@@ -1,8 +1,7 @@
 package edu.jsu.mcis.cs310.tas_sp24;
 
-import edu.jsu.mcis.cs310.tas_sp24.dao.ShiftDAO;
-
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Employee {
 
@@ -58,8 +57,12 @@ public class Employee {
 
     @Override
     public String toString() {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        String formattedActiveDate = active.format(formatter);
         return "ID #" + id + ": " + lastName +  ", " + firstName + " " + middleName +
-                " (" + badge.getId() + ", Type: " + getType() + ", Department: " +
-                getDepartment() + ", Active: " + getActive();
+                " (#" + badge.getId() + "), Type: " + getType() + ", Department: " +
+                getDepartment().getDescription() + ", Active: " + formattedActiveDate;
     }
+
 }

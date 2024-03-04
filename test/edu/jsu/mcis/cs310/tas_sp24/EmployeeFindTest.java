@@ -42,7 +42,7 @@ public class EmployeeFindTest {
         Employee e2 = employeeDAO.find(b);
 
         /* Compare to Expected Values */
-        
+
         assertEquals("ID #82: Taylor, Jennifer T (#ADD650A8), Type: Full-Time, Department: Office, Active: 02/13/2016", e2.toString());
 
     }
