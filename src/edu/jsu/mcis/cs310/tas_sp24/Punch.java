@@ -8,19 +8,21 @@ import java.time.format.DateTimeFormatter;
 
 public class Punch {
     
-private final int terminalId;
-private int id;
-private final Badge badge;
-private final EventType punchType;
-private LocalDateTime originalTimestamp, adjustedTimestamp;
-private PunchAdjustmentType adjustmentType;
+    private final int terminalId;
+    private int id;
+    private final Badge badge;
+    private final EventType punchType;
+    private LocalDateTime originalTimestamp, adjustedTimestamp;
+    private PunchAdjustmentType adjustmentType;
 
     // Minimal constructor for Punch objects
+    // Added originalTimestamp
     public Punch(int terminalId, Badge badge, EventType punchType) {
 
         this.terminalId = terminalId;
         this.badge = badge;
         this.punchType = punchType;
+        this.originalTimestamp = LocalDateTime.now();
     }
     
     // Constructor for existing punches
@@ -56,6 +58,11 @@ private PunchAdjustmentType adjustmentType;
     public LocalDateTime getOriginaltimestamp() {
         
         return originalTimestamp;
+    }
+    
+    public void setOriginalTimestamp(LocalDateTime originalTimestamp) {
+        
+        this.originalTimestamp = originalTimestamp;
     }
     
     public String printOriginal() {

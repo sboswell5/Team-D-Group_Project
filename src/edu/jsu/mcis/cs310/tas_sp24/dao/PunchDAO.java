@@ -7,11 +7,13 @@ import edu.jsu.mcis.cs310.tas_sp24.Employee;
 import edu.jsu.mcis.cs310.tas_sp24.EventType;
 import java.time.*;
 import java.sql.*;
+import java.time.format.DateTimeFormatter;
 
 // Finished find();
 // Added default case to switch
 // Added create();
 // Added insertPunch(); to go along with create();
+// create() not 100% working. problem with seconds
 
 public class PunchDAO {
     
@@ -146,9 +148,17 @@ public class PunchDAO {
     
     private int insertPunch(Punch punch) {
         
+        /*java.sql.Timestamp timestamp = new Timestamp(new java.util.Date().getTime()); // create a new Timestamp
+        LocalDateTime local = timestamp.toLocalDateTime(); // convert to LocalDateTime
+        local = local.withSecond(0).withNano(0); // zero seconds/nanoseconds
+        java.sql.Timestamp ts2 = java.sql.Timestamp.valueOf(local); // convert to Timestamp
+        
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyy-MM-dd HH:mm:ss");*/
+        
         PreparedStatement ps = null;
         ResultSet rs = null;
-
+        
         try {
 
             Connection conn = daoFactory.getConnection();
@@ -160,8 +170,8 @@ public class PunchDAO {
                 ps.setInt(1, punch.getTerminalid());
                 ps.setString(2, punch.getBadge().getId());
                 ps.setTimestamp(3, Timestamp.valueOf(punch.getOriginaltimestamp()));
-                ps.setObject(4, punch.getPunchtype());
-               
+                ps.setInt(4, punch.getPunchtype().ordinal());
+                
                 int rowsInserted = ps.executeUpdate();
 
                 if (rowsInserted > 0) {
