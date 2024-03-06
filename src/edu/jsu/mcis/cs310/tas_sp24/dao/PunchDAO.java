@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 // Added default case to switch
 // Added create();
 // Added insertPunch(); to go along with create();
-// create() not 100% working. problem with seconds
+// create() good now :)
 
 public class PunchDAO {
     
@@ -147,15 +147,7 @@ public class PunchDAO {
     }
     
     private int insertPunch(Punch punch) {
-        
-        /*java.sql.Timestamp timestamp = new Timestamp(new java.util.Date().getTime()); // create a new Timestamp
-        LocalDateTime local = timestamp.toLocalDateTime(); // convert to LocalDateTime
-        local = local.withSecond(0).withNano(0); // zero seconds/nanoseconds
-        java.sql.Timestamp ts2 = java.sql.Timestamp.valueOf(local); // convert to Timestamp
-        
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyy-MM-dd HH:mm:ss");*/
-        
+       
         PreparedStatement ps = null;
         ResultSet rs = null;
         
@@ -169,7 +161,7 @@ public class PunchDAO {
                 
                 ps.setInt(1, punch.getTerminalid());
                 ps.setString(2, punch.getBadge().getId());
-                ps.setTimestamp(3, Timestamp.valueOf(punch.getOriginaltimestamp()));
+                ps.setTimestamp(3, Timestamp.valueOf(punch.getOriginaltimestamp().withNano(0)));
                 ps.setInt(4, punch.getPunchtype().ordinal());
                 
                 int rowsInserted = ps.executeUpdate();
