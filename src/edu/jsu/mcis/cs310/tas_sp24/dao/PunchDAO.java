@@ -18,8 +18,8 @@ import java.util.ArrayList;
 public class PunchDAO {
     
     private static final String QUERY_FIND = "SELECT * FROM event WHERE id = ?";
-    //private static final String QUERY_LIST = "SELECT * FROM event WHERE badgeid = ? AND LIKE timestamp = '?%'";
-    private static final String QUERY_LIST = "SELECT * FROM event WHERE badgeid = ? AND timestamp = ?";
+    //private static final String QUERY_LIST = "SELECT * FROM event WHERE badgeid = ? AND timestamp LIKE '?%'";
+    //private static final String QUERY_LIST = "SELECT * FROM event WHERE badgeid = ? AND timestamp = ?";
 
     private final DAOFactory daoFactory;
 
@@ -216,10 +216,11 @@ public class PunchDAO {
             Connection conn = daoFactory.getConnection();
 
             if (conn.isValid(0)) {
-
-                ps = conn.prepareStatement(QUERY_LIST);
+                
+                String ld = localDate.toString();
+                ps = conn.prepareStatement("SELECT * FROM event WHERE badgeid = ? AND timestamp LIKE '" + ld + "%'");
                 ps.setString(1, badge.getId());
-                ps.setString(2, localDate.toString());
+                
                 
                 boolean hasresults = ps.execute();
 
@@ -259,19 +260,25 @@ public class PunchDAO {
                         }
                 
                         punch = new Punch(id, terminalId, badge, originalTimestamp, punchType);
+                        Boolean punchNotAdded = true;
                         
                         if (punchList.isEmpty()) {
                             
                             punchList.add(punch);
+                            punchNotAdded = false;
                         }
                         
                         for (int i = 0; i < punchList.size(); i++) {
                             
-                            if ((punchList.get(i)).getOriginaltimestamp().isAfter(originalTimestamp)) {
+                            if (((punchList.get(i)).getOriginaltimestamp()).isAfter(punch.getOriginaltimestamp())) {
                                 
                                 punchList.add(i, punch);
-                                
+                                punchNotAdded = false;
                             }
+                        }
+                        
+                        if (punchNotAdded) {
+                            punchList.add(punch);
                         }
                     }
                 }
