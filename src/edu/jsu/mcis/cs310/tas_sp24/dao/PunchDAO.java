@@ -7,7 +7,7 @@ import edu.jsu.mcis.cs310.tas_sp24.Employee;
 import edu.jsu.mcis.cs310.tas_sp24.EventType;
 import java.time.*;
 import java.sql.*;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 // Finished find();
 // Added default case to switch
@@ -18,6 +18,8 @@ import java.time.format.DateTimeFormatter;
 public class PunchDAO {
     
     private static final String QUERY_FIND = "SELECT * FROM event WHERE id = ?";
+    //private static final String QUERY_LIST = "SELECT * FROM event WHERE badgeid = ? AND LIKE timestamp = '?%'";
+    private static final String QUERY_LIST = "SELECT * FROM event WHERE badgeid = ? AND timestamp = ?";
 
     private final DAOFactory daoFactory;
 
@@ -110,7 +112,6 @@ public class PunchDAO {
         return punch;
     }
     
-    // working on
     public int create(Punch punch) {
         
         int punchTerminalId = punch.getTerminalid();
@@ -125,7 +126,6 @@ public class PunchDAO {
             // Retrieve employee associated with a given badge
             EmployeeDAO employeeDAO = daoFactory.getEmployeeDAO();
             Employee employee = employeeDAO.find(punch.getBadge());
-
             
             // If employee exists, check if new terminal ID matches the designated clock terminal of the employee's department
             if (employee != null) {
@@ -202,6 +202,105 @@ public class PunchDAO {
         }
         
         return 0;
+    }
+    
+    public ArrayList<Punch> list(Badge badge, LocalDate localDate) {
+        
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        ArrayList<Punch> punchList = new ArrayList<>();
+        Punch punch = null;
+        
+        try {
+
+            Connection conn = daoFactory.getConnection();
+
+            if (conn.isValid(0)) {
+
+                ps = conn.prepareStatement(QUERY_LIST);
+                ps.setString(1, badge.getId());
+                ps.setString(2, localDate.toString());
+                
+                boolean hasresults = ps.execute();
+
+                if (hasresults) {
+
+                    rs = ps.getResultSet();
+                    
+                    while (rs.next()) {
+                        
+                        int id = rs.getInt("id");
+                        int terminalId = rs.getInt("terminalid");
+                        LocalDateTime originalTimestamp = rs.getTimestamp("timestamp").toLocalDateTime();
+                        int eventType = rs.getInt("eventtypeid");
+                        EventType punchType = null;
+                        
+                        switch (eventType) {
+                            
+                            case 0:
+                                
+                                punchType = EventType.CLOCK_OUT;
+                                break;
+                                
+                            case 1:
+                                
+                                punchType = EventType.CLOCK_IN;
+                                break;
+                                
+                            case 2:
+                                
+                                punchType = EventType.TIME_OUT;
+                                break;
+                                
+                            // Default test - look at later?
+                            default:
+                
+                                throw new IllegalArgumentException("Unexpected punch type: " + eventType);
+                        }
+                
+                        punch = new Punch(id, terminalId, badge, originalTimestamp, punchType);
+                        
+                        if (punchList.isEmpty()) {
+                            
+                            punchList.add(punch);
+                        }
+                        
+                        for (int i = 0; i < punchList.size(); i++) {
+                            
+                            if ((punchList.get(i)).getOriginaltimestamp().isAfter(originalTimestamp)) {
+                                
+                                punchList.add(i, punch);
+                                
+                            }
+                        }
+                    }
+                }
+            }
+                
+        } catch (SQLException e) {
+
+            throw new DAOException(e.getMessage());
+
+        } finally {
+
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }
+
+        }
+        
+        return punchList;
     }
 }
         

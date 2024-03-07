@@ -40,6 +40,10 @@ public class Main {
         Punch p = punchDAO.find(236);
         System.err.println("Test Punch: " + p.toString());
         
+        LocalDate ts = LocalDate.of(2018, Month.SEPTEMBER, 27);
+        
+        System.err.println(ts);
+        
         // Testing the commit & push! - Madelyn
         // Testing the commit & push! - Kris
         //testing testing!!! 123 -shelby!
