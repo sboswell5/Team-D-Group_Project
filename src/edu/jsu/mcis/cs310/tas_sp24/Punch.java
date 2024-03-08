@@ -37,7 +37,7 @@ public class Punch {
     
     public void adjust(Shift s){
                        
-        //defining our variables: 
+       //defining our variables: 
         
        LocalTime shiftstart = s.getShiftStart();
        
@@ -120,7 +120,6 @@ public class Punch {
        return weekend; 
         
     }
-    
     
     public int getTerminalid() {
         

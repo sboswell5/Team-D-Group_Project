@@ -14,13 +14,12 @@ import java.util.ArrayList;
 // Added create();
 // Added insertPunch(); to go along with create();
 // create() good now :)
+// list() works
 
 public class PunchDAO {
     
     private static final String QUERY_FIND = "SELECT * FROM event WHERE id = ?";
-    //private static final String QUERY_LIST = "SELECT * FROM event WHERE badgeid = ? AND timestamp LIKE '?%'";
-    //private static final String QUERY_LIST = "SELECT * FROM event WHERE badgeid = ? AND timestamp = ?";
-
+    
     private final DAOFactory daoFactory;
 
     PunchDAO(DAOFactory daoFactory) {
@@ -204,6 +203,7 @@ public class PunchDAO {
         return 0;
     }
     
+    // First list() method for a single day
     public ArrayList<Punch> list(Badge badge, LocalDate localDate) {
         
         PreparedStatement ps = null;
@@ -220,7 +220,6 @@ public class PunchDAO {
                 String ld = localDate.toString();
                 ps = conn.prepareStatement("SELECT * FROM event WHERE badgeid = ? AND timestamp LIKE '" + ld + "%'");
                 ps.setString(1, badge.getId());
-                
                 
                 boolean hasresults = ps.execute();
 
@@ -258,7 +257,7 @@ public class PunchDAO {
                 
                                 throw new IllegalArgumentException("Unexpected punch type: " + eventType);
                         }
-                
+                    
                         punch = new Punch(id, terminalId, badge, originalTimestamp, punchType);
                         Boolean punchNotAdded = true;
                         
@@ -278,8 +277,17 @@ public class PunchDAO {
                         }
                         
                         if (punchNotAdded) {
+                            
                             punchList.add(punch);
                         }
+                        
+                        // get the last punch of the day
+                        // see if that punch is a clock in
+                        // if so, use plusDays() method?
+                        // somehow get the next day information? make a new arraylist?
+                        // maybe get index 0 of that 
+                        // if index 0 (first item) is clock out or time out, add to original punchList
+                        
                     }
                 }
             }
@@ -309,6 +317,30 @@ public class PunchDAO {
         
         return punchList;
     }
-}
+    
+    // Second list() method for a range of dates - not sure if work
+    public ArrayList<Punch> list(Badge badge, LocalDate begin, LocalDate end) {
         
+        ArrayList<Punch> rangedPunchList = new ArrayList<>();
+        
+        // Set the current date to the date given as a parameter
+        LocalDate date = begin;
+        
+        // Iterate through the dates until it reaches the end date (as given in the parameter)
+        while (!date.isAfter(end)) {
+            
+            // Call first list() method to get a single day punch
+            ArrayList<Punch> dayList = list(badge, date);
+            
+            // Add the single day punches to the rangedPunchList
+            rangedPunchList.addAll(dayList);
+            
+            // Move to next day
+            date = date.plusDays(1);
+        }
+        
+        return rangedPunchList;
+    }
+}
+
         
