@@ -19,6 +19,8 @@ import java.util.ArrayList;
 public class PunchDAO {
     
     private static final String QUERY_FIND = "SELECT * FROM event WHERE id = ?";
+    private static final String QUERY_LIST = "Select *, Date(`timestamp`) AS originaldate FROM `event` WHERE badgeid = ? HAVING originaldate = ? Order BY `timestamp`";
+    private static final String QUERY_CLOSE_LIST = "Select *, Date(`timestamp`) AS originaldate FROM `event` WHERE badgeid = ? HAVING originaldate = ? Order BY `timestamp` LIMIT 1";
     
     private final DAOFactory daoFactory;
 
@@ -218,8 +220,9 @@ public class PunchDAO {
             if (conn.isValid(0)) {
                 
                 String ld = localDate.toString();
-                ps = conn.prepareStatement("SELECT * FROM event WHERE badgeid = ? AND timestamp LIKE '" + ld + "%'");
+                ps = conn.prepareStatement(QUERY_LIST);
                 ps.setString(1, badge.getId());
+                ps.setString(2, ld);
                 
                 boolean hasresults = ps.execute();
 
@@ -259,35 +262,11 @@ public class PunchDAO {
                         }
                     
                         punch = new Punch(id, terminalId, badge, originalTimestamp, punchType);
-                        Boolean punchNotAdded = true;
-                        
-                        if (punchList.isEmpty()) {
-                            
-                            punchList.add(punch);
-                            punchNotAdded = false;
-                        }
-                        
-                        for (int i = 0; i < punchList.size(); i++) {
-                            
-                            if (((punchList.get(i)).getOriginaltimestamp()).isAfter(punch.getOriginaltimestamp())) {
-                                
-                                punchList.add(i, punch);
-                                punchNotAdded = false;
-                            }
-                        }
-                        
-                        if (punchNotAdded) {
-                            
-                            punchList.add(punch);
-                        }
-                        
-                        // get the last punch of the day
-                        // see if that punch is a clock in
-                        // if so, use plusDays() method?
-                        // somehow get the next day information? make a new arraylist?
-                        // maybe get index 0 of that 
-                        // if index 0 (first item) is clock out or time out, add to original punchList
-                        
+                        punchList.add(punch);
+                    }
+                    while (punchList.size()%2 != 0) {
+                        localDate = localDate.plusDays(1);
+                        punchList.add(closeList(badge, localDate));
                     }
                 }
             }
@@ -316,6 +295,90 @@ public class PunchDAO {
         }
         
         return punchList;
+    }
+    
+    public Punch closeList(Badge badge, LocalDate localDate) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Punch punch = null;
+        
+        try {
+
+            Connection conn = daoFactory.getConnection();
+
+            if (conn.isValid(0)) {
+                
+                String ld = localDate.toString();
+                ps = conn.prepareStatement(QUERY_CLOSE_LIST);
+                ps.setString(1, badge.getId());
+                ps.setString(2, ld);
+                
+                boolean hasresults = ps.execute();
+
+                if (hasresults) {
+
+                    rs = ps.getResultSet();
+                    
+                    while (rs.next()) {
+                        
+                        int id = rs.getInt("id");
+                        int terminalId = rs.getInt("terminalid");
+                        LocalDateTime originalTimestamp = rs.getTimestamp("timestamp").toLocalDateTime();
+                        int eventType = rs.getInt("eventtypeid");
+                        EventType punchType = null;
+                        
+                        switch (eventType) {
+                            
+                            case 0:
+                                
+                                punchType = EventType.CLOCK_OUT;
+                                break;
+                                
+                            case 1:
+                                
+                                punchType = EventType.CLOCK_IN;
+                                break;
+                                
+                            case 2:
+                                
+                                punchType = EventType.TIME_OUT;
+                                break;
+                                
+                            // Default test - look at later?
+                            default:
+                
+                                throw new IllegalArgumentException("Unexpected punch type: " + eventType);
+                        }
+                    
+                        punch = new Punch(id, terminalId, badge, originalTimestamp, punchType);
+                    }
+                }
+            }
+                
+        } catch (SQLException e) {
+
+            throw new DAOException(e.getMessage());
+
+        } finally {
+
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new DAOException(e.getMessage());
+                }
+            }
+
+        }
+        
+        return punch;
     }
     
     // Second list() method for a range of dates - not sure if work
