@@ -14,6 +14,8 @@ public class Punch {
     private final EventType punchType;
     private LocalDateTime originalTimestamp, adjustedtimestamp;
     private PunchAdjustmentType adjustmenttype;
+    public String shiftPart;
+    public DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
 
     // Minimal constructor for Punch objects
     // Added originalTimestamp
@@ -36,7 +38,7 @@ public class Punch {
     }
     
     public void adjust(Shift s){
-                       
+        
        //defining our variables: 
         
        LocalTime shiftstart = s.getShiftStart();
@@ -52,7 +54,28 @@ public class Punch {
        int gracePeriod = s.getGracePeriod();
        
        int dockPenalty = s.getDockPenalty();
-       //if it is a weekday
+       
+       if(originalTimestamp.toLocalTime() == shiftstart){
+           
+           adjustedtimestamp = originalTimestamp.withNano(0);
+           shiftPart = "(None)";
+       }
+       else if(originalTimestamp.toLocalTime() == lunchstart){
+           
+           adjustedtimestamp = originalTimestamp.withNano(0);
+           shiftPart = "(None)";
+       }
+       else if(originalTimestamp.toLocalTime() == lunchstop){
+           
+           adjustedtimestamp = originalTimestamp.withNano(0);
+           shiftPart = "(None)";
+       }
+       else if(originalTimestamp.toLocalTime() == shiftstop){
+           
+           adjustedtimestamp = originalTimestamp.withNano(0);
+           shiftPart = "(None)";
+       }
+              //if it is a weekday
        if(isWeekend(originalTimestamp) == false){
            
            LocalDate placeholder = LocalDate.from(originalTimestamp);
@@ -63,33 +86,65 @@ public class Punch {
                    
                    adjustedtimestamp = LocalDateTime.of(placeholder, shiftstart);
                    
+                   adjustedtimestamp.withSecond(0).withNano(0);
+                   
+                   shiftPart = "(Shift Start)";
                }
                else if(originalTimestamp.toLocalTime().isAfter(shiftstart.plusMinutes(gracePeriod))){
                
-                    adjustedtimestamp = LocalDateTime.of(placeholder, originalTimestamp.toLocalTime().plusMinutes(dockPenalty));
-           }
+                   adjustedtimestamp = LocalDateTime.of(placeholder, originalTimestamp.toLocalTime().plusMinutes(dockPenalty));
+                   
+                   adjustedtimestamp.withSecond(0).withNano(0);
+                   
+                   shiftPart = "(Shift Start)";
+                }
+          }
+          //Lunch Break
+          if(punchType == punchType.CLOCK_OUT){
+              if(originalTimestamp.toLocalTime().isBefore(lunchstart) || originalTimestamp.toLocalTime().isAfter(lunchstart)){
+                  
+                  
+                  adjustedtimestamp = LocalDateTime.of(placeholder, lunchstart);
+                  
+                  adjustedtimestamp.withSecond(0).withNano(0);
+                  
+                   shiftPart = "(Lunch Start)";
+              }
+          
+          if(punchType == punchType.CLOCK_IN){
+              
+              if(originalTimestamp.toLocalTime().isBefore(lunchstop) || originalTimestamp.toLocalTime().isAfter(lunchstop)){
+                  
+                  adjustedtimestamp = LocalDateTime.of(placeholder, lunchstop);
+                  
+                  adjustedtimestamp.withSecond(0).withNano(0);
+                  
+                  shiftPart = "(Lunch Stop)";
+              }
           }
           //if we are clocking out at the end of shift 
           if(punchType == punchType.CLOCK_OUT){
               if(originalTimestamp.toLocalTime().isBefore(shiftstop.minusMinutes(gracePeriod))){
+                  
                   adjustedtimestamp = LocalDateTime.of(placeholder, originalTimestamp.toLocalTime().minusMinutes(dockPenalty));
+                  
+                  adjustedtimestamp.withSecond(0).withNano(0);
+                  
+                  shiftPart = "(Shift Stop)";
               }
               else if(originalTimestamp.toLocalTime().isAfter(shiftstop)){
+                  
                   adjustedtimestamp = LocalDateTime.of(placeholder, shiftstop);
+                  
+                  adjustedtimestamp.withSecond(0).withNano(0);
+                  
+                  shiftPart = "(Shift Stop)";
               }
-            //not sure if this is right, how do we handle lunches??
           }
-          //if we are clocking out for lunch? what does time out mean :)
-          if(punchType == punchType.TIME_OUT){
-              if(originalTimestamp.toLocalTime().isBefore(lunchstart) || originalTimestamp.toLocalTime().isAfter(lunchstart)){
-                  adjustedtimestamp = LocalDateTime.of(placeholder, lunchstart);
-              }
-           //same logic for clocking back in after lunch: what is the unique identifier for this? 
+          
           }
        }
-       
-       
-       
+              
        
         
         //get badge
@@ -193,7 +248,8 @@ public class Punch {
     
     public String printAdjusted() {
         
-        return ":)"; //to be implemented later
+        return "#" + badge.getId() + " " + punchType + ": " + adjustedtimestamp.format(formatter).toUpperCase() + " " + shiftPart;
+                
     }
     
     @Override
