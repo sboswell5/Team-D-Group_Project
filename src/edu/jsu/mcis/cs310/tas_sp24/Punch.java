@@ -76,11 +76,11 @@ public class Punch {
            shiftPart = "(None)";
        }
               //if it is a weekday
-       if(isWeekend(originalTimestamp) == false){
+       if(!isWeekend(originalTimestamp)){
            
            LocalDate placeholder = LocalDate.from(originalTimestamp);
            //if we are clocking in for a start of shift
-           if(punchType == punchType.CLOCK_IN){
+           if(punchType == EventType.CLOCK_IN){
                
                if(originalTimestamp.toLocalTime().isBefore(shiftstart)){
                    
@@ -100,7 +100,7 @@ public class Punch {
                 }
           }
           //Lunch Break
-          if(punchType == punchType.CLOCK_OUT){
+          if(adjustedtimestamp.toLocalTime() == lunchstart){
               if(originalTimestamp.toLocalTime().isBefore(lunchstart) || originalTimestamp.toLocalTime().isAfter(lunchstart)){
                   
                   
@@ -111,7 +111,7 @@ public class Punch {
                    shiftPart = "(Lunch Start)";
               }
           
-          if(punchType == punchType.CLOCK_IN){
+          if(adjustedtimestamp.toLocalTime() == lunchstop){
               
               if(originalTimestamp.toLocalTime().isBefore(lunchstop) || originalTimestamp.toLocalTime().isAfter(lunchstop)){
                   
@@ -123,7 +123,7 @@ public class Punch {
               }
           }
           //if we are clocking out at the end of shift 
-          if(punchType == punchType.CLOCK_OUT){
+          if(punchType == EventType.CLOCK_OUT){
               if(originalTimestamp.toLocalTime().isBefore(shiftstop.minusMinutes(gracePeriod))){
                   
                   adjustedtimestamp = LocalDateTime.of(placeholder, originalTimestamp.toLocalTime().minusMinutes(dockPenalty));
@@ -165,14 +165,14 @@ public class Punch {
     public boolean isWeekend(LocalDateTime day){
         
         boolean weekend = false;
-        
+
         if(day.getDayOfWeek().toString().equals("SATURDAY") || day.getDayOfWeek().toString().equals("SUNDAY")){
-            
+
             weekend = true;
-            
+
         }
-        
-       return weekend; 
+
+       return weekend;
         
     }
     
