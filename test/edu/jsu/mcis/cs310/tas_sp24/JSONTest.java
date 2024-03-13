@@ -50,12 +50,12 @@ public class JSONTest {
 
             /* Compare to Expected JSON */
             assertEquals(expected, actual);
-
+            
         }
         catch (Exception e) {
             e.printStackTrace();
         }
-
+        
     }
 
     @Test
