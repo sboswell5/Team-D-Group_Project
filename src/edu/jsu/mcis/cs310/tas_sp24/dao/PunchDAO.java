@@ -219,7 +219,6 @@ public class PunchDAO {
 
             if (conn.isValid(0)) {
                 
-                Boolean cl = true;
                 String ld = localDate.toString();
                 ps = conn.prepareStatement(QUERY_LIST);
                 ps.setString(1, badge.getId());
@@ -265,19 +264,11 @@ public class PunchDAO {
                         punch = new Punch(id, terminalId, badge, originalTimestamp, punchType);
                         
                         punchList.add(punch);
-                        punchList.add(punch);
-                        if (punchList.size() >= 2) {
-                            if ((punchList.get(punchList.size()-1)).equals((punchList.get(punchList.size()-2)))) {
-                                punchList.remove(punchList.get(punchList.size()-1));
-                                cl = false;
-                            }
-                        }
                     }
-                    if (cl) {
-                        while (punchList.size()%2 != 0) {
-                            localDate = localDate.plusDays(1);
-                            punchList.add(closeList(badge, localDate));
-                        }
+                    
+                    while (punchList.size()%2 != 0) {
+                        localDate = localDate.plusDays(1);
+                        punchList.add(closeList(badge, localDate));
                     }
                 }
             }
@@ -411,6 +402,21 @@ public class PunchDAO {
             
             // Move to next day
             date = date.plusDays(1);
+        }
+        
+        int j = 1;
+        ArrayList<Integer> removeList = new ArrayList<>();
+        for (Punch p : rangedPunchList) {
+            if (j < rangedPunchList.size()) {
+                if (p.getId() == rangedPunchList.get(j).getId()) {
+                    removeList.add(rangedPunchList.indexOf(p));
+                }
+            }
+            j++;
+        }
+        
+        for (int index : removeList) {
+            rangedPunchList.remove(rangedPunchList.get(index));
         }
         
         return rangedPunchList;

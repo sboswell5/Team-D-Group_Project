@@ -77,8 +77,6 @@ public class PunchRangeListFindTest {
 
         /* Compare Output Strings */
         
-        System.out.println(s2.toString());
-        System.out.println(s1.toString());
         assertEquals(s2.toString(), s1.toString());
 
     }
