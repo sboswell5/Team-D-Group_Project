@@ -219,6 +219,7 @@ public class PunchDAO {
 
             if (conn.isValid(0)) {
                 
+                Boolean cl = true;
                 String ld = localDate.toString();
                 ps = conn.prepareStatement(QUERY_LIST);
                 ps.setString(1, badge.getId());
@@ -262,11 +263,21 @@ public class PunchDAO {
                         }
                     
                         punch = new Punch(id, terminalId, badge, originalTimestamp, punchType);
+                        
                         punchList.add(punch);
+                        punchList.add(punch);
+                        if (punchList.size() >= 2) {
+                            if ((punchList.get(punchList.size()-1)).equals((punchList.get(punchList.size()-2)))) {
+                                punchList.remove(punchList.get(punchList.size()-1));
+                                cl = false;
+                            }
+                        }
                     }
-                    while (punchList.size()%2 != 0) {
-                        localDate = localDate.plusDays(1);
-                        punchList.add(closeList(badge, localDate));
+                    if (cl) {
+                        while (punchList.size()%2 != 0) {
+                            localDate = localDate.plusDays(1);
+                            punchList.add(closeList(badge, localDate));
+                        }
                     }
                 }
             }
