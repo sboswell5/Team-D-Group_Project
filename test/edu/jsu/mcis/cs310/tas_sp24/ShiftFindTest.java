@@ -34,12 +34,13 @@ public class ShiftFindTest {
 
     }
     
+    // Added test
     @Test
     public void testFindShiftByID2() {
 
         ShiftDAO shiftDAO = daoFactory.getShiftDAO();
 
-        /* Retrieve Shift Rulesets from Database */
+        /* Retrieve Shift Ruleset from Database */
         
         Shift s1 = shiftDAO.find(4);
 
@@ -75,6 +76,7 @@ public class ShiftFindTest {
 
     }
     
+    // Added test
     @Test
     public void testFindShiftByBadge2() {
 
@@ -101,6 +103,7 @@ public class ShiftFindTest {
 
     }
     
+    // Added test
     @Test
     public void testFindShiftByBadge3() {
 
@@ -126,4 +129,21 @@ public class ShiftFindTest {
         assertEquals("Shift 1: 07:00 - 15:30 (510 minutes); Lunch: 12:00 - 12:30 (30 minutes)", s3.toString());
 
     }
+    
+    // Added test
+    @Test
+    public void testFindInvalidShiftByID() {
+
+        ShiftDAO shiftDAO = daoFactory.getShiftDAO();
+
+        /* Retrieve Invalid Shift Ruleset from Database */
+        
+        Shift s1 = shiftDAO.find(5);
+
+        /* Compare to Expected Values (Null) */
+        
+        assertNull(s1);
+
+    }
+    
 }

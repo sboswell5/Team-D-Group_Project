@@ -144,7 +144,6 @@ public class PunchDAO {
         
         // Return 0 if the punch fails authorization check or if an error occured during the insertion process
         return 0;
-   
     }
     
     private int insertPunch(Punch punch) {
@@ -211,7 +210,6 @@ public class PunchDAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         ArrayList<Punch> punchList = new ArrayList<>();
-        Punch punch = null;
         
         try {
 
@@ -262,19 +260,25 @@ public class PunchDAO {
                                 throw new IllegalArgumentException("Unexpected punch type: " + eventType);
                         }
                     
-                        punch = new Punch(id, terminalId, badge, originalTimestamp, punchType);
+                        Punch punch = new Punch(id, terminalId, badge, originalTimestamp, punchType);
                         
                         punchList.add(punch);
                         punchList.add(punch);
+                        
                         if (punchList.size() >= 2) {
-                            if ((punchList.get(punchList.size()-1)).equals((punchList.get(punchList.size()-2)))) {
+                            
+                            if ((punchList.get(punchList.size() - 1)).equals((punchList.get(punchList.size() - 2)))) {
+                                
                                 punchList.remove(punchList.get(punchList.size()-1));
                                 cl = false;
                             }
                         }
                     }
+                    
                     if (cl) {
+                        
                         while (punchList.size()%2 != 0) {
+                            
                             localDate = localDate.plusDays(1);
                             punchList.add(closeList(badge, localDate));
                         }
@@ -302,13 +306,13 @@ public class PunchDAO {
                     throw new DAOException(e.getMessage());
                 }
             }
-
         }
         
         return punchList;
     }
     
     public Punch closeList(Badge badge, LocalDate localDate) {
+        
         PreparedStatement ps = null;
         ResultSet rs = null;
         Punch punch = null;
