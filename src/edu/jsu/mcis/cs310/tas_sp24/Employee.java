@@ -12,8 +12,10 @@ public class Employee {
     private final Badge badge;
     private final Department department;
 
-    private EmployeeType type;
+    private final EmployeeType type;
 
+    //parameter map of objects, cast to native type
+    // class of parameters (or hashmap)
     public Employee(Integer id, String firstName, String middleName, String lastName, LocalDateTime active, Badge badge, Department department, Shift shift, EmployeeType type) {
         this.id = id;
         this.firstName = firstName;
@@ -54,15 +56,22 @@ public class Employee {
     public EmployeeType getType() {
         return type;
     }
-
+    
     @Override
     public String toString() {
-
+        
+        StringBuilder s = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         String formattedActiveDate = active.format(formatter);
-        return "ID #" + id + ": " + lastName +  ", " + firstName + " " + middleName +
-                " (#" + badge.getId() + "), Type: " + getType() + ", Department: " +
-                getDepartment().getDescription() + ", Active: " + formattedActiveDate;
+
+        s.append("ID #").append(id).append(": ");
+        s.append(lastName).append(", ").append(firstName).append(' ').append(middleName);
+        s.append(" (#").append(badge.getId()).append("), Type: ").append(getType());
+        s.append(", Department: ").append(getDepartment().getDescription());
+        s.append(", Active: ").append(formattedActiveDate);
+        
+        return s.toString();
+    
     }
 
 }
