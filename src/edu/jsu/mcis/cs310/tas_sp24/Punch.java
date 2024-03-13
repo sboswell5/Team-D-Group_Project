@@ -113,6 +113,7 @@ public class Punch {
                adjustedtimestamp = LocalDateTime.of(placeholder, lunchstart);
            }
            
+           
            else if(punchType == EventType.CLOCK_IN && originalTimestamp.toLocalTime().isAfter(lunchstart)) {
                adjustmenttype = PunchAdjustmentType.LUNCH_STOP;
                adjustedtimestamp = LocalDateTime.of(placeholder, lunchstop);
