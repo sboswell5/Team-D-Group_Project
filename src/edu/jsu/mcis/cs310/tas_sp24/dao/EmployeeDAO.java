@@ -81,7 +81,7 @@ public class EmployeeDAO {
                         employeeParams.put("badge", badge);
                         employeeParams.put("department", department);
                         employeeParams.put("shift", shift);
-                        employeeParams.put("employeeType", employeeTypeNum);
+                        employeeParams.put("employeeType", employeeType);
 
                         employee = new Employee(employeeParams);
 

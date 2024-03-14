@@ -39,7 +39,7 @@ public class Employee {
         this.badge = (Badge) employee.get("badge");
         this.department = (Department) employee.get("department");
         this.shift = (Shift) employee.get("shift");
-        this.type = (EmployeeType) employee.get("type");
+        this.type = (EmployeeType) employee.get("employeeType");
     }
 
     // getters
@@ -80,7 +80,7 @@ public class Employee {
 
         s.append("ID #").append(id).append(": ");
         s.append(lastName).append(", ").append(firstName).append(' ').append(middleName);
-        s.append(" (#").append(badge.getId()).append("), Type: ").append(getType());
+        s.append(" (#").append(badge.getId()).append("), Type: ").append(type);
         s.append(", Department: ").append(getDepartment().getDescription());
         s.append(", Active: ").append(formattedActiveDate);
         
