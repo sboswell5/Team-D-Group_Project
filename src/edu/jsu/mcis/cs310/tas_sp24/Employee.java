@@ -2,6 +2,7 @@ package edu.jsu.mcis.cs310.tas_sp24;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 
 public class Employee {
 
@@ -16,6 +17,7 @@ public class Employee {
 
     //parameter map of objects, cast to native type
     // class of parameters (or hashmap)
+    /*
     public Employee(Integer id, String firstName, String middleName, String lastName, LocalDateTime active, Badge badge, Department department, Shift shift, EmployeeType type) {
         this.id = id;
         this.firstName = firstName;
@@ -26,6 +28,18 @@ public class Employee {
         this.department = department;
         this.shift = shift;
         this.type = type;
+    } */
+
+    public Employee(HashMap<String, Object> employee) {
+        this.id = (Integer) employee.get("id");
+        this.firstName = (String) employee.get("firstName");
+        this.middleName = (String) employee.get("middleName");
+        this.lastName = (String) employee.get("lastName");
+        this.active = (LocalDateTime) employee.get("active");
+        this.badge = (Badge) employee.get("badge");
+        this.department = (Department) employee.get("department");
+        this.shift = (Shift) employee.get("shift");
+        this.type = (EmployeeType) employee.get("type");
     }
 
     // getters

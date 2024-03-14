@@ -6,6 +6,7 @@ import java.sql.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 
 public class EmployeeDAO {
 
@@ -43,6 +44,8 @@ public class EmployeeDAO {
 
                     while (rs.next()) {
 
+                        HashMap<String, Object> employeeParams = new HashMap<>();
+
                         Badge badge = badgeDAO.find(rs.getString("badgeid"));
                         String[] fullName = badge.getDescription().split(",\\s+");
 
@@ -67,9 +70,19 @@ public class EmployeeDAO {
                                 break;
 
                             default:
-                                System.out.println("pls no");
+                                throw new IllegalArgumentException("Invalid employeeType id: " + employeeType);
                         }
-                        employee = new Employee(id, firstName, middleName, lastName, active, badge, department, shift, employeeType);
+
+                        employeeParams.put("firstName", firstName);
+                        employeeParams.put("middleName", middleName);
+                        employeeParams.put("lastName", lastName);
+                        employeeParams.put("active", active);
+                        employeeParams.put("badge", badge);
+                        employeeParams.put("department", department);
+                        employeeParams.put("shift", shift);
+                        employeeParams.put("employeeType", employeeType);
+
+                        employee = new Employee(employeeParams);
 
                     }
                 }
