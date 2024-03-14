@@ -73,6 +73,7 @@ public class EmployeeDAO {
                                 throw new IllegalArgumentException("Invalid employeeType id: " + employeeType);
                         }
 
+                        employeeParams.put("id", id);
                         employeeParams.put("firstName", firstName);
                         employeeParams.put("middleName", middleName);
                         employeeParams.put("lastName", lastName);
@@ -80,7 +81,7 @@ public class EmployeeDAO {
                         employeeParams.put("badge", badge);
                         employeeParams.put("department", department);
                         employeeParams.put("shift", shift);
-                        employeeParams.put("employeeType", employeeType);
+                        employeeParams.put("employeeType", employeeTypeNum);
 
                         employee = new Employee(employeeParams);
 
