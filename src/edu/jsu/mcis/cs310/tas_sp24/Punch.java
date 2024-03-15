@@ -37,7 +37,6 @@ public class Punch {
     }
     
     public void adjust(Shift s){
-        
        //defining our variables: 
         
        LocalTime shiftstart = s.getShiftStart();
@@ -54,24 +53,22 @@ public class Punch {
        
        int dockPenalty = s.getDockPenalty();
        
-       if(originalTimestamp.toLocalTime() == shiftstart){
-           
-           adjustedtimestamp = originalTimestamp.withNano(0);
-           adjustmenttype = PunchAdjustmentType.NONE;
-           
-           //System.out.println("First if statement");
-       }
-       else if(originalTimestamp.toLocalTime() == lunchstart){
+       if(originalTimestamp.toLocalTime().withSecond(0).equals(shiftstart)) {
            
            adjustedtimestamp = originalTimestamp.withNano(0);
            adjustmenttype = PunchAdjustmentType.NONE;
        }
-       else if(originalTimestamp.toLocalTime() == lunchstop){
+       else if(originalTimestamp.toLocalTime().withSecond(0).equals(lunchstart)) {
            
            adjustedtimestamp = originalTimestamp.withNano(0);
            adjustmenttype = PunchAdjustmentType.NONE;
        }
-       else if(originalTimestamp.toLocalTime() == shiftstop){
+       else if(originalTimestamp.toLocalTime().withSecond(0).equals(lunchstop)) {
+           
+           adjustedtimestamp = originalTimestamp.withNano(0);
+           adjustmenttype = PunchAdjustmentType.NONE;
+       }
+       else if(originalTimestamp.toLocalTime().withSecond(0).equals(shiftstop)) {
            
            adjustedtimestamp = originalTimestamp.withNano(0);
            adjustmenttype = PunchAdjustmentType.NONE;
@@ -82,9 +79,20 @@ public class Punch {
            LocalDate placeholder = LocalDate.from(originalTimestamp);
            
            // =================  CLOCK IN ========================
+           /*
            if(punchType == EventType.CLOCK_IN && originalTimestamp.toLocalTime().isBefore(shiftstart.minusMinutes(roundInterval))) {
                adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
                adjustedtimestamp = LocalDateTime.of(placeholder, shiftstart);
+           }*/
+
+           if(punchType == EventType.CLOCK_IN && originalTimestamp.toLocalTime().isAfter(shiftstart.minusMinutes(roundInterval)) && originalTimestamp.toLocalTime().isBefore(shiftstart)) {
+               adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
+               adjustedtimestamp = LocalDateTime.of(placeholder, shiftstart);
+           }
+
+           else if(punchType == EventType.CLOCK_IN && originalTimestamp.toLocalTime().isBefore(shiftstart.minusMinutes(roundInterval))) {
+               //adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
+                adjustedtimestamp = LocalDateTime.of(placeholder, roundOutsideInterval(originalTimestamp.toLocalTime(), roundInterval));
            }
            
            else if(punchType == EventType.CLOCK_IN && originalTimestamp.toLocalTime().isBefore(shiftstart.plusMinutes(gracePeriod))) {
@@ -121,11 +129,11 @@ public class Punch {
            }
            
            // ================== CLOCK OUT ========================
-           if(punchType == EventType.CLOCK_OUT && originalTimestamp.toLocalTime().isBefore(shiftstop.minusMinutes(roundInterval))) {
+           if(punchType == EventType.CLOCK_OUT && originalTimestamp.toLocalTime().isBefore(shiftstop.minusMinutes(roundInterval)) && originalTimestamp.toLocalTime().isAfter(lunchstop)) {
                adjustmenttype = PunchAdjustmentType.SHIFT_DOCK;
                adjustedtimestamp = LocalDateTime.of(placeholder, shiftstop.minusMinutes(dockPenalty));
            }
-           
+
            else if(punchType == EventType.CLOCK_OUT && originalTimestamp.toLocalTime().isAfter(shiftstop.minusMinutes(roundInterval)) && originalTimestamp.toLocalTime().isBefore(shiftstop.minusMinutes(gracePeriod))) {
                adjustmenttype = PunchAdjustmentType.SHIFT_DOCK;
                adjustedtimestamp = LocalDateTime.of(placeholder, shiftstop.minusMinutes(dockPenalty));
@@ -135,117 +143,26 @@ public class Punch {
                adjustmenttype = PunchAdjustmentType.SHIFT_STOP;
                adjustedtimestamp = LocalDateTime.of(placeholder, shiftstop);
            }
-           
-           else if(punchType == EventType.CLOCK_OUT && originalTimestamp.toLocalTime().isAfter(shiftstop.plusMinutes(roundInterval))) {
-               adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
+           else if(punchType == EventType.CLOCK_OUT  && originalTimestamp.toLocalTime().isAfter(shiftstop) && originalTimestamp.toLocalTime().isBefore(shiftstop.plusMinutes(roundInterval))) {
+               adjustmenttype = PunchAdjustmentType.SHIFT_STOP;
                adjustedtimestamp = LocalDateTime.of(placeholder, shiftstop);
            }
            
-           
-           
-           
-           
-           
-           
-           
-           
-           /*
-           
-           //if we are clocking in for a start of shift
-           if(punchType == EventType.CLOCK_IN) {
-               
-               if(originalTimestamp.toLocalTime().isBefore(LocalTime.from(shiftstart.minusMinutes(roundInterval)))){
-                   adjustedtimestamp = LocalDateTime.of(placeholder, originalTimestamp.toLocalTime().plusMinutes(shiftstart.minusMinutes(roundInterval).getMinute()));
-               }
-               else if(originalTimestamp.toLocalTime().isBefore(shiftstart)) {
-                   
-                   adjustedtimestamp = LocalDateTime.of(placeholder, shiftstart);
-                   
-                   adjustedtimestamp.withSecond(0).withNano(0);
-                   
-                   adjustmenttype = PunchAdjustmentType.SHIFT_START;
-               }
-               else if(originalTimestamp.toLocalTime().isAfter(shiftstart.plusMinutes(gracePeriod))) {
-               
-                   adjustedtimestamp = LocalDateTime.of(placeholder, originalTimestamp.toLocalTime().plusMinutes(dockPenalty));
-                   
-                   adjustedtimestamp.withSecond(0).withNano(0);
-                   
-                   adjustmenttype = PunchAdjustmentType.SHIFT_START;
-                }
-          }
-          //Lunch Break
-          if(punchType == EventType.CLOCK_OUT && adjustedtimestamp.toLocalTime() == lunchstart) {
-              if(originalTimestamp.toLocalTime().isBefore(lunchstart) || originalTimestamp.toLocalTime().isAfter(lunchstart)){
-                  
-                  
-                  adjustedtimestamp = LocalDateTime.of(placeholder, lunchstart);
-                  
-                  adjustedtimestamp.withSecond(0).withNano(0);
-                  
-                   adjustmenttype = PunchAdjustmentType.LUNCH_START;
-              }
-          
-          //if(originalTimestamp.toLocalTime() == lunchstop){
-              
-              if(originalTimestamp.toLocalTime().isBefore(lunchstop) || originalTimestamp.toLocalTime().isAfter(lunchstop)){
-                  
-                  adjustedtimestamp = LocalDateTime.of(placeholder, lunchstop);
-                  
-                  adjustedtimestamp.withSecond(0).withNano(0);
-                  
-                  adjustmenttype = PunchAdjustmentType.LUNCH_STOP;
-                  
-              }
-          //}
-          //if we are clocking out at the end of shift 
-          if(punchType == EventType.CLOCK_OUT){
-              if(originalTimestamp.toLocalTime().isBefore(shiftstop.minusMinutes(gracePeriod))){
-                  
-                  adjustedtimestamp = LocalDateTime.of(placeholder, originalTimestamp.toLocalTime().minusMinutes(dockPenalty));
-                  
-                  adjustedtimestamp.withSecond(0).withNano(0);
-                  
-                  adjustmenttype = PunchAdjustmentType.SHIFT_STOP;
-              }
-              else if(originalTimestamp.toLocalTime().isAfter(LocalTime.from(shiftstart.minusMinutes(roundInterval)))){
-                  
-                  adjustedtimestamp = LocalDateTime.of(placeholder, originalTimestamp.toLocalTime().minusMinutes(shiftstop.plusMinutes(roundInterval).getMinute()));
-                  
-              }
-              else if(originalTimestamp.toLocalTime().isAfter(shiftstop)){
-                  
-                  adjustedtimestamp = LocalDateTime.of(placeholder, shiftstop);
-                  
-                  adjustedtimestamp.withSecond(0).withNano(0);
-                                    
-                  adjustmenttype = PunchAdjustmentType.SHIFT_STOP;
-              }
-          }
-          }
-*/
+           else if(punchType == EventType.CLOCK_OUT && originalTimestamp.toLocalTime().isBefore(shiftstop.plusMinutes(roundInterval)) && originalTimestamp.toLocalTime().isAfter(shiftstop)) {
+               adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
+               adjustedtimestamp = LocalDateTime.of(placeholder, shiftstop);
+           }
+
+           else if(punchType == EventType.CLOCK_OUT && originalTimestamp.toLocalTime().isAfter(shiftstop.plusMinutes(roundInterval))) {
+               //adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
+               adjustedtimestamp = LocalDateTime.of(placeholder, roundOutsideInterval(originalTimestamp.toLocalTime(), roundInterval));
+           }
           
           }
-       
-       System.out.println(adjustedtimestamp);
-              
-       
-        
-        //get badge
-        
-        //determine if they are on break or actually clocking out for the day 
-        
-        //get localDateTime of the shift they're on, figure out how to determine if they need to be penalized or are in the grace period
-        
-        //result is saved as adjustedTimeStamp of localDateTime type
- 
-        
-        
-        
+
     }
-    
-    //creating a function to determine if it's the weekend or not: 
-    
+
+    //creating a function to determine if it's the weekend or not:
     public boolean isWeekend(LocalDateTime day){
         
         boolean weekend = false;
@@ -259,7 +176,29 @@ public class Punch {
        return weekend;
         
     }
-    
+
+    public  LocalTime roundOutsideInterval(LocalTime originalTimestamp, int roundInterval) {
+
+        int OGminute = originalTimestamp.getMinute();
+        LocalTime roundedTime = null;
+        int remain = OGminute % roundInterval;
+
+        if(remain == 0) {
+            this.adjustmenttype = PunchAdjustmentType.NONE;
+            roundedTime = originalTimestamp;
+        }
+        else if(remain <= 7) {
+            this.adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
+            roundedTime = originalTimestamp.minusMinutes(remain);
+        }
+        else if(remain >= 8) {
+            this.adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
+            roundedTime = originalTimestamp.plusMinutes(remain);
+        }
+
+        return roundedTime;
+    }
+
     public int getTerminalid() {
         
         return terminalId;
@@ -315,7 +254,7 @@ public class Punch {
         s.append(punchType).append(": ").append(adjustedtimestamp.format(formatter).toUpperCase());
         s.append(" (").append(adjustmenttype).append(")");
         
-        System.out.println("#" + badge.getId() + " " + punchType + ": " + adjustedtimestamp.format(formatter).toUpperCase() + " " + adjustmenttype);
+        //System.out.println("#" + badge.getId() + " " + punchType + ": " + adjustedtimestamp.format(formatter).toUpperCase() + " " + adjustmenttype);
         //return "#" + badge.getId() + " " + punchType + ": " + adjustedtimestamp.format(formatter).toUpperCase() + " " + "(" + adjustmenttype + ")";
          
         return s.toString();

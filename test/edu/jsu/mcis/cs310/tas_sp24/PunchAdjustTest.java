@@ -177,6 +177,7 @@ public class PunchAdjustTest {
         assertEquals("#8E5F0240 CLOCK IN: MON 08/27/2018 07:15:00 (Shift Dock)", p3.printAdjusted());
 
         assertEquals("#D2C39273 CLOCK OUT: MON 09/10/2018 15:07:52", p4.printOriginal());
+        //System.out.println(s1.getShiftStop());
         assertEquals("#D2C39273 CLOCK OUT: MON 09/10/2018 15:15:00 (Interval Round)", p4.printAdjusted());
 
         assertEquals("#408B195F CLOCK OUT: TUE 08/21/2018 15:28:13", p5.printOriginal());
