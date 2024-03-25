@@ -57,8 +57,9 @@ public class PunchDAO {
                         Badge badge = new BadgeDAO(daoFactory).find(badgeId);
                         LocalDateTime originalTimestamp = rs.getTimestamp("timestamp").toLocalDateTime();
                         int eventType = rs.getInt("eventtypeid");
-                        EventType punchType = null;
+                        EventType punchType = EventType.values()[eventType];
                         
+                        // do not need switch
                         switch (eventType) {
                             
                             case 0:
@@ -122,12 +123,13 @@ public class PunchDAO {
     
     public int create(Punch punch) {
         
+        int result = 0;
         int punchTerminalId = punch.getTerminalid();
         
         // If terminal ID is 0, automatically authorize new punch
         if (punchTerminalId == 0) {
             
-            return insertPunch(punch);
+            result = insertPunch(punch);
             
         } else {
             
@@ -144,13 +146,13 @@ public class PunchDAO {
                 if (punchTerminalId == employeeTerminalId) {
                     
                     // Insert the punch if IDs match
-                    return insertPunch(punch);
+                    result = insertPunch(punch);
                 }
             }
         }
         
         // Return 0 if the punch fails authorization check or if an error occured during the insertion process
-        return 0;
+        return result;
     }
     
     private int insertPunch(Punch punch) {
@@ -164,6 +166,7 @@ public class PunchDAO {
 
             if (conn.isValid(0)) {
 
+                // add query to top (string)
                 ps = conn.prepareStatement("INSERT INTO event (terminalid, badgeid, timestamp, eventtypeid) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
                 
                 ps.setInt(1, punch.getTerminalid());
@@ -249,6 +252,8 @@ public class PunchDAO {
                         int terminalId = rs.getInt("terminalid");
                         LocalDateTime originalTimestamp = rs.getTimestamp("timestamp").toLocalDateTime();
                         int eventType = rs.getInt("eventtypeid");
+                        
+                        // same as above
                         EventType punchType = null;
                         
                         switch (eventType) {
@@ -279,6 +284,7 @@ public class PunchDAO {
                         punchList.add(punch);
                     }
                     
+                    // don't assume even number of punches
                     while (punchList.size()%2 != 0) {
                         
                         localDate = localDate.plusDays(1);
@@ -321,6 +327,7 @@ public class PunchDAO {
         return punchList;
     }
     
+    // more descriptive method name - double check on what exactly it does
     public Punch closeList(Badge badge, LocalDate localDate) {
         
         PreparedStatement ps = null;
@@ -334,7 +341,7 @@ public class PunchDAO {
             if (conn.isValid(0)) {
                 
                 String ld = localDate.toString();
-                ps = conn.prepareStatement(QUERY_CLOSE_LIST);
+                ps = conn.prepareStatement(QUERY_CLOSE_LIST); //maybe use query just in og method
                 ps.setString(1, badge.getId());
                 ps.setString(2, ld);
                 
@@ -413,7 +420,8 @@ public class PunchDAO {
         return punch;
     }
     
-    // Second list() method for a range of dates - not sure if work
+    // Second list() method for a range of dates
+    // add query to ensure the loop isn't infinite (instead return empty list) if values were switched
     public ArrayList<Punch> list(Badge badge, LocalDate begin, LocalDate end) {
         
         ArrayList<Punch> rangedPunchList = new ArrayList<>();

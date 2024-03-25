@@ -177,6 +177,7 @@ public class Punch {
         
     }
 
+    // can be 2 lines of code after mod
     public  LocalTime roundOutsideInterval(LocalTime originalTimestamp, int roundInterval) {
 
         int OGminute = originalTimestamp.getMinute();

@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 public class ShiftDAO {
 
+    // more descriptive names for queries
     private static final String QUERY_FIND = "SELECT * FROM shift WHERE id = ?";
     private static final String QUERY_FIND2 = "SELECT * FROM employee WHERE badgeid = ?";
 
@@ -42,6 +43,7 @@ public class ShiftDAO {
                     rs = ps.getResultSet();
 
                     while (rs.next()) {
+                        
                         HashMap<String, String> shiftSet = new HashMap<>();
                         
                         shiftSet.put("id", ((Integer) id).toString());
@@ -65,7 +67,9 @@ public class ShiftDAO {
                         shiftSet.put("lunchThreshold", ((Integer) rs.getInt("lunchthreshold")).toString());
                         
                         Duration shiftDuration = Duration.between(shiftStart, shiftStop);
-                        if(shiftDuration.isNegative()) {
+                        
+                        if (shiftDuration.isNegative()) {
+                            
                             LocalTime posDuration = shiftStart.minus(shiftDuration);
                             shiftDuration = Duration.between(posDuration, shiftStart);
                         }

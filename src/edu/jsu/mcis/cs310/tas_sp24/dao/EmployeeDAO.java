@@ -10,13 +10,15 @@ import java.util.HashMap;
 
 public class EmployeeDAO {
 
-    private static final String QUERY_FIND = "SELECT * FROM employee WHERE id=? ";
-    private static final String QUERY_FIND2 = "SELECT * FROM employee WHERE badgeid=? ";
+    private static final String QUERY_FIND = "SELECT * FROM employee WHERE id = ?";
+    private static final String QUERY_FIND2 = "SELECT * FROM employee WHERE badgeid = ?";
     private final DAOFactory daoFactory;
     private final ShiftDAO shiftDAO;
     private final DepartmentDAO departmentDAO;
     private final BadgeDAO badgeDAO;
+    
     EmployeeDAO(DAOFactory daoFactory, ShiftDAO shiftDAO, DepartmentDAO departmentDAO, BadgeDAO badgeDAO) {
+        
         this.daoFactory = daoFactory;
         this.departmentDAO = departmentDAO;
         this.shiftDAO = shiftDAO;
@@ -30,15 +32,17 @@ public class EmployeeDAO {
         ResultSet rs = null;
 
         try {
+            
             Connection conn = daoFactory.getConnection();
 
-            if(conn.isValid(0)) {
+            if (conn.isValid(0)) {
+                
                 ps = conn.prepareStatement(QUERY_FIND);
                 ps.setInt(1, id);
 
                 boolean hasresults = ps.execute();
 
-                if(hasresults) {
+                if (hasresults) {
 
                     rs = ps.getResultSet();
 
@@ -60,16 +64,22 @@ public class EmployeeDAO {
 
                         int employeeTypeNum = rs.getInt("employeetypeid");
                         EmployeeType employeeType = null;
+                        
+                        // simplify
                         switch(employeeTypeNum) {
+                            
                             case 0:
+                                
                                 employeeType = EmployeeType.PART_TIME;
                                 break;
 
                             case 1:
+                                
                                 employeeType = EmployeeType.FULL_TIME;
                                 break;
 
                             default:
+                                
                                 throw new IllegalArgumentException("Invalid employeeType id: " + employeeType);
                         }
 
@@ -84,32 +94,44 @@ public class EmployeeDAO {
                         employeeParams.put("employeeType", employeeType);
 
                         employee = new Employee(employeeParams);
-
                     }
                 }
             }
+            
         } catch(SQLException e) {
+            
             throw new DAOException(e.getMessage());
+            
         } finally {
 
             if (rs != null) {
+                
                 try {
+                    
                     rs.close();
+                    
                 } catch (SQLException e) {
+                    
                     throw new DAOException(e.getMessage());
                 }
             }
+            
             if (ps != null) {
+                
                 try {
+                    
                     ps.close();
+                    
                 } catch (SQLException e) {
+                    
                     throw new DAOException(e.getMessage());
                 }
             }
-
         }
+        
         return employee;
     }
+    
     public Employee find(Badge badge) {
 
         Employee employee = null;
@@ -117,9 +139,11 @@ public class EmployeeDAO {
         ResultSet rs = null;
 
         try {
+            
             Connection conn = daoFactory.getConnection();
 
             if (conn.isValid(0)) {
+                
                 ps = conn.prepareStatement(QUERY_FIND2);
                 ps.setString(1, badge.getId());
 
@@ -134,6 +158,7 @@ public class EmployeeDAO {
                     }
                 }
             }
+            
         } catch (SQLException e) {
 
             throw new DAOException(e.getMessage());
@@ -141,20 +166,28 @@ public class EmployeeDAO {
         } finally {
 
             if (rs != null) {
+                
                 try {
+                    
                     rs.close();
+                    
                 } catch (SQLException e) {
+                    
                     throw new DAOException(e.getMessage());
                 }
             }
+            
             if (ps != null) {
+                
                 try {
+                    
                     ps.close();
+                    
                 } catch (SQLException e) {
+                    
                     throw new DAOException(e.getMessage());
                 }
             }
-
         }
 
         return employee;
