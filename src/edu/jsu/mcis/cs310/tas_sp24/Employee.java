@@ -86,5 +86,6 @@ public class Employee {
         s.append(", Active: ").append(formattedActiveDate);
         
         return s.toString();
+        
     }
 }
