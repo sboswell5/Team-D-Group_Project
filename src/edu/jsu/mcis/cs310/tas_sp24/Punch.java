@@ -89,7 +89,7 @@ public class Punch {
            }*/
 
            if(punchType == EventType.CLOCK_IN && originalTimestamp.toLocalTime().isAfter(shiftstart.minusMinutes(roundInterval)) && originalTimestamp.toLocalTime().isBefore(shiftstart)) {
-               adjustmenttype = PunchAdjustmentType.SHIFT_START; // 8=====================================
+               adjustmenttype = PunchAdjustmentType.SHIFT_START; //
                adjustedtimestamp = LocalDateTime.of(placeholder, shiftstart);
            }
 
@@ -191,7 +191,7 @@ public class Punch {
 
         else if(originalTimestamp.getMinute() % roundInterval > (roundInterval / 2)) {
             this.adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
-            originalTimestamp = this.originalTimestamp.toLocalTime().plusMinutes(originalTimestamp.getMinute() % roundInterval).withSecond(0).withNano(0);
+            originalTimestamp = this.originalTimestamp.toLocalTime().plusMinutes(roundInterval - (originalTimestamp.getMinute() % roundInterval)).withSecond(0).withNano(0);
         }
 
         else if(originalTimestamp.getMinute() % roundInterval < (roundInterval / 2)) {
