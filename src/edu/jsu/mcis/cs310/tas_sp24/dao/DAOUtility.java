@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.format.DateTimeFormatter;
 import com.github.cliftonlabs.json_simple.*;
 import edu.jsu.mcis.cs310.tas_sp24.*;
+import java.math.BigDecimal;
 
 /**
  * 
@@ -35,7 +36,7 @@ public final class DAOUtility {
             punchData.put("badgeid", String.valueOf(dlp.getBadge().getId()));
             punchData.put("terminalid", String.valueOf(dlp.getTerminalid()));
             punchData.put("punchtype", String.valueOf(dlp.getPunchtype()));
-            //punchData.put("adjustmenttype", String.valueOf()); // get value
+            punchData.put("adjustmenttype", String.valueOf(dlp.getAdjustmenttype()));
             punchData.put("originaltimestamp", String.valueOf(dlp.toString()));
             punchData.put("adjustedtimestamp", String.valueOf(dlp.printAdjusted()));
 
@@ -47,7 +48,12 @@ public final class DAOUtility {
         String json = Jsoner.serialize(jsonData);
         
         /* Return JSON String to caller */
-        return json;
-       
+        return json; 
     }
+    
+    /*
+    public static BigDecimal calculateAbsenteeism(ArrayList<Punch> punchlist, Shift s) {
+        
+     
+    }*/
 }

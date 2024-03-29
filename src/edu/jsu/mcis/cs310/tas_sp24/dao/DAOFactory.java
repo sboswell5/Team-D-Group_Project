@@ -53,5 +53,10 @@ public final class DAOFactory {
     public EmployeeDAO getEmployeeDAO() {
         return new EmployeeDAO(this, getShiftDAO(), getDepartmentDAO(), getBadgeDAO());
     }
+    
+    // Added this with addition of AbsenteeismDAO
+    public AbsenteeismDAO getAbsenteeismDAO() {
+        return new AbsenteeismDAO(this);
+    }
 
 }
