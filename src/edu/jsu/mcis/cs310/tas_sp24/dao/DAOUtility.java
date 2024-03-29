@@ -51,9 +51,11 @@ public final class DAOUtility {
         return json; 
     }
     
-    
+    /*
     public static BigDecimal calculateAbsenteeism(ArrayList<Punch> punchlist, Shift s) {
+        int scheduledMinutes = calculateTotalMinutes(shift), actualMinutes = calculateTotalMinutes(punch);
+        BigDecimal absenteeism = (scheduledMinutes / actualMinutes) - 100;
         
-        
-    }
+        return absenteeism;
+    }*/
 }
