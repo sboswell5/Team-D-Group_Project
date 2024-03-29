@@ -10,6 +10,7 @@ public class AbsenteeismDAO {
 
     private static final String QUERY_FIND = "SELECT * FROM absenteeism WHERE employeeid = ? AND payperiod = ?";
     private static final String QUERY_REPLACE = "REPLACE INTO absenteeism (employeeid, payperiod, percentage) VALUES (?, ?, ?)"; // look into
+    // possibly do delete if match and then insert if not exist
 
     private final DAOFactory daoFactory;
 

@@ -82,14 +82,9 @@ public class Punch {
            LocalDate placeholder = LocalDate.from(originalTimestamp);
            
            // =================  CLOCK IN ========================
-           /*
-           if(punchType == EventType.CLOCK_IN && originalTimestamp.toLocalTime().isBefore(shiftstart.minusMinutes(roundInterval))) {
-               adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
-               adjustedtimestamp = LocalDateTime.of(placeholder, shiftstart);
-           }*/
 
            if(punchType == EventType.CLOCK_IN && originalTimestamp.toLocalTime().isAfter(shiftstart.minusMinutes(roundInterval)) && originalTimestamp.toLocalTime().isBefore(shiftstart)) {
-               adjustmenttype = PunchAdjustmentType.SHIFT_START; //
+               adjustmenttype = PunchAdjustmentType.SHIFT_START;
                adjustedtimestamp = LocalDateTime.of(placeholder, shiftstart);
            }
 

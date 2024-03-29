@@ -37,7 +37,7 @@ public final class DAOUtility {
             punchData.put("terminalid", String.valueOf(dlp.getTerminalid()));
             punchData.put("punchtype", String.valueOf(dlp.getPunchtype()));
             punchData.put("adjustmenttype", String.valueOf(dlp.getAdjustmenttype()));
-            punchData.put("originaltimestamp", String.valueOf(dlp.toString()));
+            punchData.put("originaltimestamp", String.valueOf(dlp.printOriginal()));
             punchData.put("adjustedtimestamp", String.valueOf(dlp.printAdjusted()));
 
             /* Append HashMap to ArrayList */
@@ -50,6 +50,11 @@ public final class DAOUtility {
         /* Return JSON String to caller */
         return json; 
     }
+    
+    /*public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift) {
+        
+        
+    }*/
     
     /*
     public static BigDecimal calculateAbsenteeism(ArrayList<Punch> punchlist, Shift s) {
