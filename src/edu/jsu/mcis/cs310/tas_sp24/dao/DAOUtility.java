@@ -51,9 +51,9 @@ public final class DAOUtility {
         return json; 
     }
     
-    /*
+    
     public static BigDecimal calculateAbsenteeism(ArrayList<Punch> punchlist, Shift s) {
         
-     
-    }*/
+        
+    }
 }
