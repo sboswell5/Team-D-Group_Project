@@ -15,7 +15,7 @@ public class Punch {
     private final EventType punchType;
     private LocalDateTime originalTimestamp, adjustedtimestamp;
     private PunchAdjustmentType adjustmenttype;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
+    public final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
 
     // Minimal constructor for Punch objects
     // Added originalTimestamp
@@ -223,6 +223,11 @@ public class Punch {
         
         return originalTimestamp;
     }
+    
+    public LocalDateTime getAdjustedtimestamp() {
+        
+        return adjustedtimestamp;
+    }
 
     public PunchAdjustmentType getAdjustmenttype() {
         return adjustmenttype;
@@ -233,19 +238,24 @@ public class Punch {
         this.originalTimestamp = originalTimestamp;
     }
     
-    public String printOriginal() {
-
-        StringBuilder s = new StringBuilder();
-        
+    public String formatDate(LocalDateTime ldt) {
         // Get the time in the correct format
-        String formattedDate = originalTimestamp.format(formatter);
+        String formattedDate = ldt.format(formatter);
         
         // Capitalize the abbreviated day
         formattedDate = formattedDate.substring(0, 3).toUpperCase() + formattedDate.substring(3);
         
+        return formattedDate;
+    }
+    
+    public String printOriginal() {
+
+        StringBuilder s = new StringBuilder();
+        String fd = formatDate(originalTimestamp);
+        
         // Format Information in String Builder
         s.append('#').append(badge.getId()).append(' ');
-        s.append(punchType).append(": ").append(formattedDate);
+        s.append(punchType).append(": ").append(fd);
         
         return s.toString();
     }
@@ -255,7 +265,7 @@ public class Punch {
         StringBuilder s = new StringBuilder();
         
         s.append('#').append(badge.getId()).append(' ');
-        s.append(punchType).append(": ").append(adjustedtimestamp.format(formatter).toUpperCase());
+        s.append(punchType).append(": ").append(formatDate(adjustedtimestamp));
         s.append(" (").append(adjustmenttype).append(")");
         
         //System.out.println("#" + badge.getId() + " " + punchType + ": " + adjustedtimestamp.format(formatter).toUpperCase() + " " + adjustmenttype);

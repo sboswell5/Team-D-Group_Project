@@ -3,7 +3,6 @@ package edu.jsu.mcis.cs310.tas_sp24.dao;
 import java.time.*;
 import java.util.*;
 import java.time.temporal.ChronoUnit;
-import java.time.format.DateTimeFormatter;
 import com.github.cliftonlabs.json_simple.*;
 import edu.jsu.mcis.cs310.tas_sp24.*;
 import java.math.BigDecimal;
@@ -30,15 +29,15 @@ public final class DAOUtility {
         for (Punch dlp : dailypunchlist) {
             /* Create HashMap Object (one for every Punch!) */
             HashMap<String, String> punchData = new HashMap<>();
-
+            
             /* Add Punch Data to HashMap */
             punchData.put("id", String.valueOf(dlp.getId()));
             punchData.put("badgeid", String.valueOf(dlp.getBadge().getId()));
             punchData.put("terminalid", String.valueOf(dlp.getTerminalid()));
             punchData.put("punchtype", String.valueOf(dlp.getPunchtype()));
             punchData.put("adjustmenttype", String.valueOf(dlp.getAdjustmenttype()));
-            punchData.put("originaltimestamp", String.valueOf(dlp.printOriginal()));
-            punchData.put("adjustedtimestamp", String.valueOf(dlp.printAdjusted()));
+            punchData.put("originaltimestamp", String.valueOf(dlp.formatDate(dlp.getOriginaltimestamp())));
+            punchData.put("adjustedtimestamp", String.valueOf(dlp.formatDate(dlp.getAdjustedtimestamp())));
 
             /* Append HashMap to ArrayList */
             jsonData.add(punchData);
