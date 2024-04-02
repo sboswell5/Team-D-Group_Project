@@ -421,10 +421,16 @@ public class PunchDAO {
     }
     
     // Second list() method for a range of dates
-    // add query to ensure the loop isn't infinite (instead return empty list) if values were switched
+    // add query to ensure the loop isn't infinite (instead return empty list) if values were switched (RESOLVED)
     public ArrayList<Punch> list(Badge badge, LocalDate begin, LocalDate end) {
         
         ArrayList<Punch> rangedPunchList = new ArrayList<>();
+        
+        // Check if begin date is after end date.
+        if (begin.isAfter(end)){
+            // return empty list.
+            return rangedPunchList;
+        }
         
         // Set the current date to the date given as a parameter
         LocalDate date = begin;
