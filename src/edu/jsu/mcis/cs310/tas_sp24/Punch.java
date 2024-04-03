@@ -201,7 +201,7 @@ public class Punch {
             
             if (punchType == EventType.CLOCK_IN) {
                 
-                if (originalTimestamp.toLocalTime().isAfter(lunchstart) && originalTimestamp.toLocalTime().isBefore(lunchstop)) {
+                if (originalTimestamp.toLocalTime().isAfter(lunchstart) && originalTimestamp.toLocalTime().isBefore(shiftstop)) { //&& originalTimestamp.toLocalTime().isBefore(lunchstop)) {
                     adjustmenttype = PunchAdjustmentType.LUNCH_STOP;
                     adjustedtimestamp = LocalDateTime.of(placeholder, lunchstop).withSecond(0).withNano(0);
                 }
