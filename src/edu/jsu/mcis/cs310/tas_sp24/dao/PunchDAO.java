@@ -239,7 +239,7 @@ public class PunchDAO {
                     while (punchList.size()%2 != 0) {
                         
                         localDate = localDate.plusDays(1);
-                        punchList.add(closeList(badge, localDate));
+                        punchList.add(closeClockInPair(badge, localDate));
                     }
                 }
             }
@@ -278,8 +278,8 @@ public class PunchDAO {
         return punchList;
     }
     
-    // more descriptive method name - double check on what exactly it does
-    public Punch closeList(Badge badge, LocalDate localDate) {
+    // This is for the punches that "time out" or "clock out" the next day following a "clock in" the previous day
+    public Punch closeClockInPair(Badge badge, LocalDate localDate) {
         
         PreparedStatement ps = null;
         ResultSet rs = null;

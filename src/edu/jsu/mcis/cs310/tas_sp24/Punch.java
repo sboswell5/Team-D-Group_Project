@@ -38,6 +38,9 @@ public class Punch {
     }
     
     public void adjust(Shift s) {
+        
+        adjustedtimestamp = originalTimestamp;
+        
         //defining our variables:
 
         LocalTime shiftstart = s.getShiftStart();
@@ -197,13 +200,23 @@ public class Punch {
                     adjustmenttype = PunchAdjustmentType.LUNCH_START;
                     adjustedtimestamp = LocalDateTime.of(placeholder, lunchstart).withSecond(0).withNano(0);
                 }
-            }
+
+                else if(originalTimestamp.toLocalTime().isAfter(lunchstart)) {    
+                    adjustmenttype = PunchAdjustmentType.LUNCH_START;
+                    adjustedtimestamp = LocalDateTime.of(placeholder, lunchstart).withSecond(0).withNano(0);
+                }
             
             if (punchType == EventType.CLOCK_IN) {
                 
-                if (originalTimestamp.toLocalTime().isAfter(lunchstart) && originalTimestamp.toLocalTime().isBefore(lunchstop)) {
+                if (originalTimestamp.toLocalTime().isAfter(lunchstop)) {
                     adjustmenttype = PunchAdjustmentType.LUNCH_STOP;
                     adjustedtimestamp = LocalDateTime.of(placeholder, lunchstop).withSecond(0).withNano(0);
+                }
+            
+                else if(originalTimestamp.toLocalTime().isBefore(lunchstop)) {
+                    adjustmenttype = PunchAdjustmentType.LUNCH_STOP;
+                    adjustedtimestamp = LocalDateTime.of(placeholder, lunchstop).withSecond(0).withNano(0);
+                    System.out.println("ryan");
                 }
             }
 
@@ -236,13 +249,14 @@ public class Punch {
                 }
                 System.out.println(adjustedtimestamp);
             }
+        }
+            
         } else {
             LocalDate placeholder = LocalDate.from(originalTimestamp);
             adjustedtimestamp = LocalDateTime.of(placeholder, roundOutsideInterval(originalTimestamp.toLocalTime(), roundInterval)).withSecond(0).withNano(0);
         }
-
     }
-
+    
     //creating a function to determine if it's the weekend or not:
     public boolean isWeekend(LocalDateTime day){
         
@@ -260,7 +274,7 @@ public class Punch {
 
     // can be 2 lines of code after mod
 
-    public  LocalTime roundOutsideInterval(LocalTime originalTimestamp, int roundInterval) {
+    public LocalTime roundOutsideInterval(LocalTime originalTimestamp, int roundInterval) {
         if(originalTimestamp.getMinute() % roundInterval == 0) { 
             this.adjustmenttype = PunchAdjustmentType.NONE; 
             originalTimestamp.withSecond(0).withNano(0);
@@ -276,32 +290,7 @@ public class Punch {
         }
         return originalTimestamp; 
     }
-/*
-
-    public LocalTime roundOutsideInterval(LocalTime originalTimestamp, int roundInterval) {
-        double minute = originalTimestamp.getMinute();
-        double second = (originalTimestamp.getSecond() * 0.01);
-        double remainder = (minute + second)  % (double)roundInterval;
-
-        if (remainder == 0) {
-            this.adjustmenttype = PunchAdjustmentType.NONE;
-            return originalTimestamp.withSecond(0).withNano(0);
-        }
-
-            double adjustment = (remainder <= (double) roundInterval / 2) ? -remainder : roundInterval - remainder;
-
-            this.adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
-            Math.round(adjustment);
-        System.out.println(adjustment);
-            return originalTimestamp.plusMinutes((long)adjustment).withSecond(0).withNano(0);
-
-    }
-
- */
-
-
-
-
+    
     public int getTerminalid() {
         
         return terminalId;
@@ -349,9 +338,9 @@ public class Punch {
         formattedDate = formattedDate.substring(0, 3).toUpperCase() + formattedDate.substring(3);
         
         return formattedDate;
-    }*/
+    }
     
-    /*public String printOriginal() {
+    public String printOriginal() {
 
         StringBuilder s = new StringBuilder();
         String fd = formatDate(originalTimestamp);
