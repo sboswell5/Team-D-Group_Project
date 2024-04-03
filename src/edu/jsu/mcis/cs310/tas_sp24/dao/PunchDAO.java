@@ -58,30 +58,6 @@ public class PunchDAO {
                         LocalDateTime originalTimestamp = rs.getTimestamp("timestamp").toLocalDateTime();
                         int eventType = rs.getInt("eventtypeid");
                         EventType punchType = EventType.values()[eventType];
-                        
-                        // do not need switch
-                        switch (eventType) {
-                            
-                            case 0:
-                                
-                                punchType = EventType.CLOCK_OUT;
-                                break;
-                                
-                            case 1:
-                                
-                                punchType = EventType.CLOCK_IN;
-                                break;
-                                
-                            case 2:
-                                
-                                punchType = EventType.TIME_OUT;
-                                break;
-                                
-                            // Default test - look at later?
-                            default:
-                
-                                throw new IllegalArgumentException("Unexpected punch type: " + eventType);
-                        }
                 
                         punch = new Punch(id, terminalId, badge, originalTimestamp, punchType);
                     } 
@@ -252,33 +228,8 @@ public class PunchDAO {
                         int terminalId = rs.getInt("terminalid");
                         LocalDateTime originalTimestamp = rs.getTimestamp("timestamp").toLocalDateTime();
                         int eventType = rs.getInt("eventtypeid");
+                        EventType punchType = EventType.values()[eventType];
                         
-                        // same as above
-                        EventType punchType = null;
-                        
-                        switch (eventType) {
-                            
-                            case 0:
-                                
-                                punchType = EventType.CLOCK_OUT;
-                                break;
-                                
-                            case 1:
-                                
-                                punchType = EventType.CLOCK_IN;
-                                break;
-                                
-                            case 2:
-                                
-                                punchType = EventType.TIME_OUT;
-                                break;
-                                
-                            // Default test - look at later?
-                            default:
-                
-                                throw new IllegalArgumentException("Unexpected punch type: " + eventType);
-                        }
-                    
                         Punch punch = new Punch(id, terminalId, badge, originalTimestamp, punchType);
                         
                         punchList.add(punch);
@@ -357,31 +308,8 @@ public class PunchDAO {
                         int terminalId = rs.getInt("terminalid");
                         LocalDateTime originalTimestamp = rs.getTimestamp("timestamp").toLocalDateTime();
                         int eventType = rs.getInt("eventtypeid");
-                        EventType punchType = null;
-                        
-                        switch (eventType) {
-                            
-                            case 0:
-                                
-                                punchType = EventType.CLOCK_OUT;
-                                break;
-                                
-                            case 1:
-                                
-                                punchType = EventType.CLOCK_IN;
-                                break;
-                                
-                            case 2:
-                                
-                                punchType = EventType.TIME_OUT;
-                                break;
-                                
-                            // Default test - look at later?
-                            default:
-                
-                                throw new IllegalArgumentException("Unexpected punch type: " + eventType);
-                        }
-                    
+                        EventType punchType = EventType.values()[eventType];
+                      
                         punch = new Punch(id, terminalId, badge, originalTimestamp, punchType);
                     }
                 }
