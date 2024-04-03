@@ -52,6 +52,11 @@ public final class DAOUtility {
     
     /*public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift) {
         
+    // iterate through the collection of punches - totaling up the number of minutes between pairs of "clock in" and "clock out" punches
+        // minus lunch break deductions
+    // time between "clock in" and "time out" pairs should NOT be included in daily total
+    // deduction for lunch should be made IF employee worked more than minimum minutes (even if they didn't clock out)
+        // deduction should NOT be made if employee didn't work enough minutes
         
     }*/
     

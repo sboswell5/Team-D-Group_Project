@@ -9,8 +9,11 @@ import java.sql.*;
 public class AbsenteeismDAO {
 
     private static final String QUERY_FIND = "SELECT * FROM absenteeism WHERE employeeid = ? AND payperiod = ?";
-    private static final String QUERY_REPLACE = "REPLACE INTO absenteeism (employeeid, payperiod, percentage) VALUES (?, ?, ?)"; // look into
+    //private static final String QUERY_REPLACE = "REPLACE INTO absenteeism (employeeid, payperiod, percentage) VALUES (?, ?, ?)"; // look into
+    
     // possibly do delete if match and then insert if not exist
+    private static final String QUERY_DELETE = "DELETE FROM absenteeism WHERE employeeid = ? AND payperiod = ?";
+    private static final String QUERY_INSERT = "INSERT INTO absenteeism (employeeid, payperiod, percentage) VALUES (?, ?, ?)";
 
     private final DAOFactory daoFactory;
 
@@ -87,13 +90,30 @@ public class AbsenteeismDAO {
 
             if (conn.isValid(0)) {
 
-                ps = conn.prepareStatement(QUERY_REPLACE);
+                /*ps = conn.prepareStatement(QUERY_REPLACE);
                 
                 ps.setInt(1, absenteeism.getEmployee().getId());
                 ps.setDate(2, Date.valueOf(absenteeism.getLocalDate()));
                 ps.setBigDecimal(3, absenteeism.getBigDecimal());
                 
-                ps.executeUpdate();
+                ps.executeUpdate();*/
+                
+                PreparedStatement dps = conn.prepareStatement(QUERY_DELETE);
+                PreparedStatement ips = conn.prepareStatement(QUERY_INSERT);    
+                
+                dps.setInt(1, absenteeism.getEmployee().getId());
+                dps.setDate(2, Date.valueOf(absenteeism.getLocalDate()));
+                
+                int deletedRows = dps.executeUpdate();
+                
+                if (deletedRows == 0) {
+                  
+                    ips.setInt(1, absenteeism.getEmployee().getId());
+                    ips.setDate(2, Date.valueOf(absenteeism.getLocalDate()));
+                    ips.setBigDecimal(3, absenteeism.getBigDecimal());
+                
+                    ips.executeUpdate();
+                }
             }
                 
         } catch (SQLException e) {

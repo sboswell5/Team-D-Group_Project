@@ -196,8 +196,12 @@ public class Punch {
                 if (originalTimestamp.toLocalTime().isBefore(lunchstart)) {
                     adjustmenttype = PunchAdjustmentType.LUNCH_START;
                     adjustedtimestamp = LocalDateTime.of(placeholder, lunchstart).withSecond(0).withNano(0);
-
-                } else if (originalTimestamp.toLocalTime().isAfter(lunchstart) && originalTimestamp.toLocalTime().isBefore(lunchstop)) {
+                }
+            }
+            
+            if (punchType == EventType.CLOCK_IN) {
+                
+                if (originalTimestamp.toLocalTime().isAfter(lunchstart) && originalTimestamp.toLocalTime().isBefore(lunchstop)) {
                     adjustmenttype = PunchAdjustmentType.LUNCH_STOP;
                     adjustedtimestamp = LocalDateTime.of(placeholder, lunchstop).withSecond(0).withNano(0);
                 }
@@ -223,7 +227,7 @@ public class Punch {
                     adjustmenttype = PunchAdjustmentType.SHIFT_STOP;
                     adjustedtimestamp = LocalDateTime.of(placeholder, shiftstop).withSecond(0).withNano(0);
 
-                } else if (originalTimestamp.toLocalTime().isBefore(shiftstop.plusMinutes(roundInterval))) {
+                } else if (originalTimestamp.toLocalTime().isBefore(shiftstop.plusMinutes(roundInterval)) && originalTimestamp.toLocalTime().isAfter(lunchstop)) {
                     adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
                     adjustedtimestamp = LocalDateTime.of(placeholder, shiftstop).withSecond(0).withNano(0);
 
@@ -260,23 +264,20 @@ public class Punch {
         if(originalTimestamp.getMinute() % roundInterval == 0) { 
             this.adjustmenttype = PunchAdjustmentType.NONE; 
             originalTimestamp.withSecond(0).withNano(0);
-            System.out.print(originalTimestamp);
         }
-        else if(originalTimestamp.getMinute() + (originalTimestamp.getSecond() * .01) % roundInterval > (roundInterval / 2)) {
+        else if((originalTimestamp.getMinute() + (originalTimestamp.getSecond() * .01)) % roundInterval > (roundInterval / 2)) {
             this.adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
             originalTimestamp = this.originalTimestamp.toLocalTime().plusMinutes(roundInterval - (originalTimestamp.getMinute() % roundInterval)).withSecond(0).withNano(0);
         }
 
-        else if(originalTimestamp.getMinute()  + (originalTimestamp.getSecond() * .01) % roundInterval < (roundInterval / 2)) {
+        else if((originalTimestamp.getMinute()  + (originalTimestamp.getSecond() * .01)) % roundInterval < (roundInterval / 2)) {
             this.adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
-            System.out.println(originalTimestamp);
             originalTimestamp = this.originalTimestamp.toLocalTime().minusMinutes(originalTimestamp.getMinute() % roundInterval).withSecond(0).withNano(0);
-            System.out.println("\n" + originalTimestamp);
         }
         return originalTimestamp; 
     }
-
 /*
+
     public LocalTime roundOutsideInterval(LocalTime originalTimestamp, int roundInterval) {
         double minute = originalTimestamp.getMinute();
         double second = (originalTimestamp.getSecond() * 0.01);
@@ -340,7 +341,7 @@ public class Punch {
         this.originalTimestamp = originalTimestamp;
     }
     
-    public String formatDate(LocalDateTime ldt) {
+    /*public String formatDate(LocalDateTime ldt) {
         // Get the time in the correct format
         String formattedDate = ldt.format(formatter);
         
@@ -348,9 +349,9 @@ public class Punch {
         formattedDate = formattedDate.substring(0, 3).toUpperCase() + formattedDate.substring(3);
         
         return formattedDate;
-    }
+    }*/
     
-    public String printOriginal() {
+    /*public String printOriginal() {
 
         StringBuilder s = new StringBuilder();
         String fd = formatDate(originalTimestamp);
@@ -368,6 +369,37 @@ public class Punch {
         
         s.append('#').append(badge.getId()).append(' ');
         s.append(punchType).append(": ").append(formatDate(adjustedtimestamp));
+        s.append(" (").append(adjustmenttype).append(")");
+        
+        //System.out.println("#" + badge.getId() + " " + punchType + ": " + adjustedtimestamp.format(formatter).toUpperCase() + " " + adjustmenttype);
+        //return "#" + badge.getId() + " " + punchType + ": " + adjustedtimestamp.format(formatter).toUpperCase() + " " + "(" + adjustmenttype + ")";
+         
+        return s.toString();
+    }*/
+    
+    public String printOriginal() {
+
+        StringBuilder s = new StringBuilder();
+        
+        // Get the time in the correct format
+        String formattedDate = originalTimestamp.format(formatter);
+        
+        // Capitalize the abbreviated day
+        formattedDate = formattedDate.substring(0, 3).toUpperCase() + formattedDate.substring(3);
+        
+        // Format Information in String Builder
+        s.append('#').append(badge.getId()).append(' ');
+        s.append(punchType).append(": ").append(formattedDate);
+        
+        return s.toString();
+    }
+    
+    public String printAdjusted() {
+        
+        StringBuilder s = new StringBuilder();
+        
+        s.append('#').append(badge.getId()).append(' ');
+        s.append(punchType).append(": ").append(adjustedtimestamp.format(formatter).toUpperCase());
         s.append(" (").append(adjustmenttype).append(")");
         
         //System.out.println("#" + badge.getId() + " " + punchType + ": " + adjustedtimestamp.format(formatter).toUpperCase() + " " + adjustmenttype);
