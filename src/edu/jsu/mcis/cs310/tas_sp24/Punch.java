@@ -135,7 +135,7 @@ public class Punch {
                adjustedtimestamp = LocalDateTime.of(placeholder, roundOutsideInterval(originalTimestamp.toLocalTime(), roundInterval).withSecond(0).withNano(0));
            }
 
-           else if(punchType == EventType.CLOCK_OUT && originalTimestamp.toLocalTime().isAfter(shiftstop.minusMinutes(roundInterval)) && originalTimestamp.toLocalTime().isBefore(shiftstop.minusMinutes(gracePeriod)) || originalTimestamp.toLocalTime().equals(shiftstop.minusMinutes(roundInterval)) && originalTimestamp.toLocalTime().isBefore(shiftstop.minusMinutes(gracePeriod))) {
+           else if(punchType == EventType.CLOCK_OUT && originalTimestamp.toLocalTime().isAfter(shiftstop.minusMinutes(roundInterval)) && originalTimestamp.toLocalTime().isBefore(shiftstop.minusMinutes(gracePeriod))) {
                adjustmenttype = PunchAdjustmentType.SHIFT_DOCK;
                adjustedtimestamp = LocalDateTime.of(placeholder, shiftstop.minusMinutes(dockPenalty)).withSecond(0).withNano(0);
            }
@@ -149,7 +149,7 @@ public class Punch {
                adjustedtimestamp = LocalDateTime.of(placeholder, shiftstop).withSecond(0).withNano(0);
            }
            
-           else if(punchType == EventType.CLOCK_OUT && originalTimestamp.toLocalTime().isBefore(shiftstop.plusMinutes(roundInterval))){ // || originalTimestamp.toLocalTime().isAfter(shiftstop)) 
+           else if(punchType == EventType.CLOCK_OUT && originalTimestamp.toLocalTime().isBefore(shiftstop.plusMinutes(roundInterval)) || originalTimestamp.toLocalTime().isAfter(shiftstop)) {
                adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
                adjustedtimestamp = LocalDateTime.of(placeholder, shiftstop).withSecond(0).withNano(0);
            }
@@ -273,22 +273,19 @@ public class Punch {
     }
 
     // can be 2 lines of code after mod
+    public  LocalTime roundOutsideInterval(LocalTime originalTimestamp, int roundInterval) {
+        if(originalTimestamp.getMinute() % roundInterval == 0) { this.adjustmenttype = PunchAdjustmentType.NONE; originalTimestamp.withSecond(0).withNano(0); }
 
-    public LocalTime roundOutsideInterval(LocalTime originalTimestamp, int roundInterval) {
-        if(originalTimestamp.getMinute() % roundInterval == 0) { 
-            this.adjustmenttype = PunchAdjustmentType.NONE; 
-            originalTimestamp.withSecond(0).withNano(0);
-        }
-        else if((originalTimestamp.getMinute() + (originalTimestamp.getSecond() * .01)) % roundInterval > (roundInterval / 2)) {
+        else if(originalTimestamp.getMinute() % roundInterval > (roundInterval / 2)) {
             this.adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
             originalTimestamp = this.originalTimestamp.toLocalTime().plusMinutes(roundInterval - (originalTimestamp.getMinute() % roundInterval)).withSecond(0).withNano(0);
         }
 
-        else if((originalTimestamp.getMinute()  + (originalTimestamp.getSecond() * .01)) % roundInterval < (roundInterval / 2)) {
+        else if(originalTimestamp.getMinute() % roundInterval < (roundInterval / 2)) {
             this.adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
             originalTimestamp = this.originalTimestamp.toLocalTime().minusMinutes(originalTimestamp.getMinute() % roundInterval).withSecond(0).withNano(0);
         }
-        return originalTimestamp; 
+        return originalTimestamp;
     }
     
     public int getTerminalid() {
