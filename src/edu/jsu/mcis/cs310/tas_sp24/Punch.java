@@ -205,6 +205,7 @@ public class Punch {
                     adjustmenttype = PunchAdjustmentType.LUNCH_START;
                     adjustedtimestamp = LocalDateTime.of(placeholder, lunchstart).withSecond(0).withNano(0);
                 }
+            }
             
             if (punchType == EventType.CLOCK_IN) {
                 
@@ -213,7 +214,7 @@ public class Punch {
                     adjustedtimestamp = LocalDateTime.of(placeholder, lunchstop).withSecond(0).withNano(0);
                 }
             
-                else if(originalTimestamp.toLocalTime().isBefore(lunchstop)) {
+                else if(originalTimestamp.toLocalTime().isBefore(lunchstop) && originalTimestamp.toLocalTime().isAfter(shiftstart.plusMinutes(roundInterval)) ){
                     adjustmenttype = PunchAdjustmentType.LUNCH_STOP;
                     adjustedtimestamp = LocalDateTime.of(placeholder, lunchstop).withSecond(0).withNano(0);
                     System.out.println("ryan");
@@ -249,7 +250,7 @@ public class Punch {
                 }
                 System.out.println(adjustedtimestamp);
             }
-        }
+        
             
         } else {
             LocalDate placeholder = LocalDate.from(originalTimestamp);
@@ -273,10 +274,13 @@ public class Punch {
     }
 
     // can be 2 lines of code after mod
-    public  LocalTime roundOutsideInterval(LocalTime originalTimestamp, int roundInterval) {
-        if(originalTimestamp.getMinute() % roundInterval == 0) { this.adjustmenttype = PunchAdjustmentType.NONE; originalTimestamp.withSecond(0).withNano(0); }
 
-        else if(originalTimestamp.getMinute() % roundInterval > (roundInterval / 2)) {
+    public LocalTime roundOutsideInterval(LocalTime originalTimestamp, int roundInterval) {
+        if(originalTimestamp.getMinute() % roundInterval == 0) { 
+            this.adjustmenttype = PunchAdjustmentType.NONE; 
+            originalTimestamp.withSecond(0).withNano(0);
+        }
+        else if((originalTimestamp.getMinute() + (originalTimestamp.getSecond() * .01)) % roundInterval > (roundInterval / 2)) {
             this.adjustmenttype = PunchAdjustmentType.INTERVAL_ROUND;
             originalTimestamp = this.originalTimestamp.toLocalTime().plusMinutes(roundInterval - (originalTimestamp.getMinute() % roundInterval)).withSecond(0).withNano(0);
         }
