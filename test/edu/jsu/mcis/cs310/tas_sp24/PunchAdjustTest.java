@@ -41,7 +41,7 @@ public class PunchAdjustTest {
         
         assertEquals("#28DC3FB8 CLOCK IN: FRI 09/07/2018 06:50:35", p1.printOriginal());
         assertEquals("#28DC3FB8 CLOCK IN: FRI 09/07/2018 07:00:00 (Shift Start)", p1.printAdjusted());
-
+//not passing
         assertEquals("#28DC3FB8 CLOCK OUT: FRI 09/07/2018 12:03:54", p2.printOriginal());
         assertEquals("#28DC3FB8 CLOCK OUT: FRI 09/07/2018 12:00:00 (Lunch Start)", p2.printAdjusted());
 
