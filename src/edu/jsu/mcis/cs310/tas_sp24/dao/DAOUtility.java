@@ -36,8 +36,8 @@ public final class DAOUtility {
             punchData.put("terminalid", String.valueOf(dlp.getTerminalid()));
             punchData.put("punchtype", String.valueOf(dlp.getPunchtype()));
             punchData.put("adjustmenttype", String.valueOf(dlp.getAdjustmenttype()));
-            punchData.put("originaltimestamp", String.valueOf(dlp.formatDate(dlp.getOriginaltimestamp())));
-            punchData.put("adjustedtimestamp", String.valueOf(dlp.formatDate(dlp.getAdjustedtimestamp())));
+            //punchData.put("originaltimestamp", String.valueOf(dlp.formatDate(dlp.getOriginaltimestamp())));
+            //punchData.put("adjustedtimestamp", String.valueOf(dlp.formatDate(dlp.getAdjustedtimestamp())));
 
             /* Append HashMap to ArrayList */
             jsonData.add(punchData);
@@ -50,15 +50,47 @@ public final class DAOUtility {
         return json; 
     }
     
-    /*public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift) {
+    public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift) {
         
     // iterate through the collection of punches - totaling up the number of minutes between pairs of "clock in" and "clock out" punches
         // minus lunch break deductions
-    // time between "clock in" and "time out" pairs should NOT be included in daily total
+
+        LocalTime clockIn_time = null;
+        long minutesWorked = 0;
+        boolean clockIn = false;
+        int lunchDuration = (int)shift.getLunchStart().until(shift.getLunchStop(), ChronoUnit.MINUTES);
+
+        for (Punch punch : dailypunchlist) {
+            switch (punch.getPunchtype()) {
+                case CLOCK_IN:
+                    clockIn = true;
+                    clockIn_time = punch.getAdjustedtimestamp().toLocalTime();
+                    continue;
+
+                case CLOCK_OUT:
+                    if (clockIn) {
+                        minutesWorked = clockIn_time.until(punch.getAdjustedtimestamp().toLocalTime(), ChronoUnit.MINUTES);
+                        if (minutesWorked <= shift.getLunchThreshold()) {
+                            minutesWorked -= lunchDuration;
+                        } else {
+                            minutesWorked = clockIn_time.until(punch.getAdjustedtimestamp().toLocalTime(), ChronoUnit.MINUTES);
+                        }
+                    }
+                    break;
+
+                case TIME_OUT:
+                    System.out.println("Time out");
+                    break;
+
+            }
+        }
+        return (int)minutesWorked;
+    // time between "clock in" and "time out" pairs should NOT be included in daily total (if it's a TIME_OUT)
+
     // deduction for lunch should be made IF employee worked more than minimum minutes (even if they didn't clock out)
         // deduction should NOT be made if employee didn't work enough minutes
         
-    }*/
+    }
     
     /*
     public static BigDecimal calculateAbsenteeism(ArrayList<Punch> punchlist, Shift s) {
