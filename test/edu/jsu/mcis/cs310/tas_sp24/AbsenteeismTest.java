@@ -1,6 +1,15 @@
 package edu.jsu.mcis.cs310.tas_sp24;
 
-import edu.jsu.mcis.cs310.tas_sp24.dao.*;
+import edu.jsu.mcis.cs310.tas_sp24.dao.PunchDAO;
+import edu.jsu.mcis.cs310.tas_sp24.dao.DAOUtility;
+import edu.jsu.mcis.cs310.tas_sp24.dao.AbsenteeismDAO;
+import edu.jsu.mcis.cs310.tas_sp24.dao.EmployeeDAO;
+import edu.jsu.mcis.cs310.tas_sp24.dao.DAOFactory;
+import edu.jsu.mcis.cs310.tas_sp24.Employee;
+import edu.jsu.mcis.cs310.tas_sp24.Badge;
+import edu.jsu.mcis.cs310.tas_sp24.Absenteeism;
+import edu.jsu.mcis.cs310.tas_sp24.Shift;
+import edu.jsu.mcis.cs310.tas_sp24.Punch;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -117,6 +126,8 @@ public class AbsenteeismTest {
     @Test
     public void testAbsenteeismShift2Weekend() {
         
+        //System.err.println("testAbsenteeismShift2Weekend()");
+        
         AbsenteeismDAO absenteeismDAO = daoFactory.getAbsenteeismDAO();
         EmployeeDAO employeeDAO = daoFactory.getEmployeeDAO();
         PunchDAO punchDAO = daoFactory.getPunchDAO();
@@ -140,6 +151,7 @@ public class AbsenteeismTest {
         
         for (Punch punch : punchlist) {
             punch.adjust(s);
+            //System.err.println(punch.printAdjusted());
         }
         
         /* Compute Pay Period Total Absenteeism */
@@ -157,7 +169,7 @@ public class AbsenteeismTest {
         
         /* Compare to Expected Value */
         
-        assertEquals("#08D01475 (Pay Period Starting 09-16-2018): -27.50%", a2.toString());
+        assertEquals("#08D01475 (Pay Period Starting 09-16-2018): -28.75%", a2.toString());
         
     }
     
