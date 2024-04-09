@@ -58,7 +58,8 @@ public final class DAOUtility {
         LocalTime clockIn_time = null;
         long minutesWorked = 0;
         boolean clockIn = false;
-        int lunchDuration = (int)shift.getLunchStart().until(shift.getLunchStop(), ChronoUnit.MINUTES);
+        long lunchDuration = shift.getLunchDuration().toMinutes();
+       
 
         for (Punch punch : dailypunchlist) {
             switch (punch.getPunchtype()) {
@@ -70,17 +71,18 @@ public final class DAOUtility {
                 case CLOCK_OUT:
                     if (clockIn) {
                         minutesWorked = clockIn_time.until(punch.getAdjustedtimestamp().toLocalTime(), ChronoUnit.MINUTES);
-                        if (minutesWorked <= shift.getLunchThreshold()) {
+                        if (minutesWorked >= shift.getLunchThreshold()) {
                             minutesWorked -= lunchDuration;
                         } else {
                             minutesWorked = clockIn_time.until(punch.getAdjustedtimestamp().toLocalTime(), ChronoUnit.MINUTES);
                         }
                     }
                     break;
-
+/*
                 case TIME_OUT:
                     System.out.println("Time out");
                     break;
+                    */
 
             }
         }
