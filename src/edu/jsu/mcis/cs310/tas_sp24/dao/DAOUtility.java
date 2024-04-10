@@ -63,16 +63,14 @@ public final class DAOUtility {
         
         for (Punch punch : dailypunchlist) {
             
-            LocalDateTime adjusted = punch.getAdjustedtimestamp();
-            
-            LocalTime clocked_time = adjusted.toLocalTime();
+            LocalTime clocked_time = punch.getAdjustedtimestamp().toLocalTime();
            
             switch (punch.getPunchtype()) {
                 case CLOCK_IN:
                     if(clocked_time.isBefore(shift.getLunchStart())) {
                         clockIn = true;
                         clockInTime = clocked_time;
-                    } else if(punch.isWeekend(adjusted)){ //is this how to do this?
+                    } else if(punch.isWeekend(punch.day)){ //is this how to do this?
                         clockIn = true;
                         clockInTime = clocked_time;
                     }
@@ -83,13 +81,13 @@ public final class DAOUtility {
                         minutesWorked = clockInTime.until(clocked_time, ChronoUnit.MINUTES);
                         if (minutesWorked >= shift.getLunchThreshold()) {
                             minutesWorked = minutesWorked - lunchDuration;
-                        } else if (punch.isWeekend(adjusted)) { //is this how to do this?
+                        }else if(punch.isWeekend(punch.day)){ //is this how to do this?
                             minutesWorked = clockInTime.until(clocked_time, ChronoUnit.MINUTES);
                         }
                         else {
                             minutesWorked = clockInTime.until(clocked_time, ChronoUnit.MINUTES);
                         }
-                  
+                    }
                     break;
                     
 /*

@@ -259,17 +259,14 @@ public class Punch {
     }
     
     //creating a function to determine if it's the weekend or not:
-    public boolean isWeekend(LocalDateTime ldt){
+    public boolean isWeekend(LocalDateTime day){
         
-        DayOfWeek day = ldt.getDayOfWeek();
-                
         boolean weekend = false;
 
-        if (day.equals(DayOfWeek.SATURDAY) || day.equals(DayOfWeek.SUNDAY)){
-        
-        weekend = true;
-        
-        return weekend; 
+        if (day.getDayOfWeek().toString().equals("SATURDAY") || day.getDayOfWeek().toString().equals("SUNDAY")){
+
+            weekend = true;
+
         }
 
        return weekend;
