@@ -189,5 +189,21 @@ public class PunchAdjustTest {
         assertEquals("#ADD650A8 CLOCK OUT: TUE 09/11/2018 15:30:00 (Shift Stop)", p7.printAdjusted());
 
     }
+    
+    @Test
+    public void testAdjust() {
+        
+        PunchDAO punchDAO = daoFactory.getPunchDAO();
+        ShiftDAO shiftDAO = daoFactory.getShiftDAO();
+
+        Shift s1 = shiftDAO.find(1);
+        
+        Punch p1 = punchDAO.find(3634);
+        
+        p1.adjust(s1);
+        
+        assertEquals("#28DC3FB8 CLOCK IN: FRI 09/07/2018 06:50:35", p1.printOriginal());
+        assertEquals("#28DC3FB8 CLOCK IN: FRI 09/07/2018 07:00:00 (Shift Start)", p1.printAdjusted());
+    }
 
 }
