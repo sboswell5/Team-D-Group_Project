@@ -168,7 +168,7 @@ public class Punch {
 
 
  */
-        System.out.println(originalTimestamp);
+        //System.out.println(originalTimestamp);
 
         if (!isWeekend(originalTimestamp)) {
             LocalDate placeholder = LocalDate.from(originalTimestamp);
@@ -217,7 +217,7 @@ public class Punch {
                 else if(originalTimestamp.toLocalTime().isBefore(lunchstop) && originalTimestamp.toLocalTime().isAfter(shiftstart.plusMinutes(roundInterval)) ){
                     adjustmenttype = PunchAdjustmentType.LUNCH_STOP;
                     adjustedtimestamp = LocalDateTime.of(placeholder, lunchstop).withSecond(0).withNano(0);
-                    System.out.println("ryan");
+                    //System.out.println("ryan");
                 }
             }
 
@@ -248,7 +248,7 @@ public class Punch {
                 } else if (originalTimestamp.toLocalTime().isAfter(shiftstop.plusMinutes(roundInterval))) {
                     adjustedtimestamp = LocalDateTime.of(placeholder, roundOutsideInterval(originalTimestamp.toLocalTime(), roundInterval)).withSecond(0).withNano(0);
                 }
-                System.out.println(adjustedtimestamp);
+                //System.out.println(adjustedtimestamp);
             }
         
             

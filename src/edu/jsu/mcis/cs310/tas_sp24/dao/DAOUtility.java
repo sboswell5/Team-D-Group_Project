@@ -59,8 +59,7 @@ public final class DAOUtility {
         long minutesWorked = 0;
         boolean clockIn = false;
         long lunchDuration = shift.getLunchDuration().toMinutes();
-       
-
+ =
         for (Punch punch : dailypunchlist) {
             switch (punch.getPunchtype()) {
                 case CLOCK_IN:
@@ -69,21 +68,18 @@ public final class DAOUtility {
                     continue;
 
                 case CLOCK_OUT:
+                    System.out.println(clockIn_time + " : " + punch.getAdjustedtimestamp().toLocalTime() + " : " + minutesWorked);
                     if (clockIn) {
-                        minutesWorked = clockIn_time.until(punch.getAdjustedtimestamp().toLocalTime(), ChronoUnit.MINUTES);
+                        minutesWorked += clockIn_time.until(punch.getAdjustedtimestamp().toLocalTime(), ChronoUnit.MINUTES);
+
                         if (minutesWorked >= shift.getLunchThreshold()) {
                             minutesWorked -= lunchDuration;
-                        } else {
-                            minutesWorked = clockIn_time.until(punch.getAdjustedtimestamp().toLocalTime(), ChronoUnit.MINUTES);
+                            System.out.println("lunch deductions");
                         }
+
+
                     }
                     break;
-/*
-                case TIME_OUT:
-                    System.out.println("Time out");
-                    break;
-                    */
-
             }
         }
         return (int)minutesWorked;
