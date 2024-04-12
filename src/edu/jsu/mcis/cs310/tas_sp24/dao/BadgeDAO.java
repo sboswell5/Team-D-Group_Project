@@ -9,8 +9,6 @@ public class BadgeDAO {
     private static final String QUERY_INSERT = "INSERT INTO badge (id, description) VALUES (?, ?)";
     private static final String QUERY_DELETE = "DELETE FROM badge WHERE id = ?";
     
-    
-    
     private static final String QUERY_FIND = "SELECT * FROM badge WHERE id = ?";
 
     private final DAOFactory daoFactory;
@@ -49,9 +47,7 @@ public class BadgeDAO {
                         badge = new Badge(id, description);
 
                     }
-
                 }
-
             }
 
         } catch (SQLException e) {
@@ -74,17 +70,16 @@ public class BadgeDAO {
                     throw new DAOException(e.getMessage());
                 }
             }
-
         }
 
         return badge;
-
     }
 
-  public boolean create(Badge badge) {
+    public boolean create(Badge badge) {
        
         PreparedStatement ps = null;
         ResultSet rs = null;
+        boolean updatedTable = false;
         
         try {
 
@@ -98,14 +93,11 @@ public class BadgeDAO {
                 ps.setString(1, badge.getDescription());
                 ps.setString(2, badge.getId());
                
-                
                 int rowsInserted = ps.executeUpdate();
 
                 if (rowsInserted == 1) {
-                    return true;
-                } else {
-                    return false;
-                }
+                    updatedTable = true;
+                } 
             }
                 
         } catch (SQLException e) {
@@ -138,12 +130,15 @@ public class BadgeDAO {
                 }
             }
         }
-    
-    
-  public boolean delete(Badge badge) {
+       
+        return updatedTable;
+    }
+
+    public boolean delete(String id) {
        
         PreparedStatement ps = null;
         ResultSet rs = null;
+        boolean updatedTable = false;
         
         try {
 
@@ -154,14 +149,12 @@ public class BadgeDAO {
                 // add query to top (string)
                 ps = conn.prepareStatement(QUERY_DELETE, Statement.RETURN_GENERATED_KEYS);
                 
-                ps.setString(1, badge.getId());
+                ps.setString(1, id);
                 
                 int rowsInserted = ps.executeUpdate();
 
                 if (rowsInserted == 1) {
-                    return true;
-                } else {
-                    return false;
+                    updatedTable = true;
                 }
             }
                 
@@ -195,5 +188,8 @@ public class BadgeDAO {
                 }
             }
         }
-  
+        
+        return updatedTable;
+    }
+}
 

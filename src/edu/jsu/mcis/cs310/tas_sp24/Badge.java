@@ -10,6 +10,7 @@ public class Badge {
         this.description = description;
     }
     
+    // substring or no. format
     public Badge(String description){
         this.description = description;
         CRC32 crc32 = new CRC32();
@@ -22,6 +23,8 @@ public class Badge {
             hexString = "0" + hexString;
         }
         this.id = hexString;
+        
+        //System.out.println("|" + hexString + "|");
     }
 
     public String getId() {
