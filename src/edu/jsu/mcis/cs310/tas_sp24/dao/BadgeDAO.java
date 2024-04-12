@@ -5,6 +5,12 @@ import java.sql.*;
 
 public class BadgeDAO {
 
+    // Queries
+    private static final String QUERY_INSERT = "INSERT INTO badge (id, description) VALUES (?, ?)";
+    private static final String QUERY_DELETE = "DELETE FROM badge WHERE id = ?";
+    
+    
+    
     private static final String QUERY_FIND = "SELECT * FROM badge WHERE id = ?";
 
     private final DAOFactory daoFactory;
@@ -75,4 +81,119 @@ public class BadgeDAO {
 
     }
 
-}
+  public boolean create(Badge badge) {
+       
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        try {
+
+            Connection conn = daoFactory.getConnection();
+
+            if (conn.isValid(0)) {
+
+                // add query to top (string)
+                ps = conn.prepareStatement(QUERY_INSERT, Statement.RETURN_GENERATED_KEYS);
+                
+                ps.setString(1, badge.getDescription());
+                ps.setString(2, badge.getId());
+               
+                
+                int rowsInserted = ps.executeUpdate();
+
+                if (rowsInserted == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+                
+        } catch (SQLException e) {
+
+            throw new DAOException(e.getMessage());
+
+        } finally {
+
+            if (rs != null) {
+                
+                try {
+                    
+                    rs.close();
+                    
+                } catch (SQLException e) {
+                    
+                    throw new DAOException(e.getMessage());
+                }
+            }
+            
+            if (ps != null) {
+                
+                try {
+                    
+                    ps.close();
+                    
+                } catch (SQLException e) {
+                    
+                    throw new DAOException(e.getMessage());
+                }
+            }
+        }
+    
+    
+  public boolean delete(Badge badge) {
+       
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        try {
+
+            Connection conn = daoFactory.getConnection();
+
+            if (conn.isValid(0)) {
+
+                // add query to top (string)
+                ps = conn.prepareStatement(QUERY_DELETE, Statement.RETURN_GENERATED_KEYS);
+                
+                ps.setString(1, badge.getId());
+                
+                int rowsInserted = ps.executeUpdate();
+
+                if (rowsInserted == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+                
+        } catch (SQLException e) {
+
+            throw new DAOException(e.getMessage());
+
+        } finally {
+
+            if (rs != null) {
+                
+                try {
+                    
+                    rs.close();
+                    
+                } catch (SQLException e) {
+                    
+                    throw new DAOException(e.getMessage());
+                }
+            }
+            
+            if (ps != null) {
+                
+                try {
+                    
+                    ps.close();
+                    
+                } catch (SQLException e) {
+                    
+                    throw new DAOException(e.getMessage());
+                }
+            }
+        }
+  
+
