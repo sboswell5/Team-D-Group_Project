@@ -87,7 +87,6 @@ public class BadgeDAO {
 
             if (conn.isValid(0)) {
 
-                // add query to top (string)
                 ps = conn.prepareStatement(QUERY_INSERT, Statement.RETURN_GENERATED_KEYS);
                 
                 ps.setString(1, badge.getDescription());

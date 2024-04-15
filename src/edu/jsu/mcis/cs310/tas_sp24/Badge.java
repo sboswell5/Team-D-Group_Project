@@ -35,8 +35,6 @@ public class Badge {
         return description;
     }
     
-    
-
     @Override
     public String toString() {
 

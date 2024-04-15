@@ -30,7 +30,7 @@ public class Shift {
         this.lunchDuration = Duration.parse(shift.get("lunchDuration"));
     }*/
     
-    public Shift(HashMap<String, String> shift) {
+    public Shift(HashMap<String, String> shift, DailySchedule dailySchedule) {
         this.id = Integer.valueOf(shift.get("id"));
         this.description = shift.get("description");
         this.defaultschedule = new DailySchedule(shift);

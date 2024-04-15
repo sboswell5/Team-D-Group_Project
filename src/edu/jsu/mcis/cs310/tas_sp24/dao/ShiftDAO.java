@@ -12,6 +12,7 @@ public class ShiftDAO {
     // more descriptive names for queries
     private static final String QUERY_GET_SHIFT = "SELECT * FROM shift WHERE id = ?";
     private static final String QUERY_GET_EMPLOYEE = "SELECT * FROM employee WHERE badgeid = ?";
+    private static final String QUERY_GET_DAILYSCHEDULE = "SELECT * FROM dailyschedule WHERE id = ?";
   
     private final DAOFactory daoFactory;
 
@@ -50,36 +51,10 @@ public class ShiftDAO {
                         shiftSet.put("id", ((Integer) id).toString());
                         shiftSet.put("description", rs.getString("description"));
                         
-                        LocalTime shiftStart = rs.getTime("shiftstart").toLocalTime();
-                        LocalTime shiftStop = rs.getTime("shiftstop").toLocalTime();
+                        int dailyScheduleId = rs.getInt("dailyscheduleid");
+                        DailySchedule dailySchedule = findDailySchedule(dailyScheduleId);
                         
-                        shiftSet.put("shiftStart", shiftStart.toString());
-                        shiftSet.put("shiftStop", shiftStop.toString());
-                        
-                        shiftSet.put("roundInterval", ((Integer) rs.getInt("roundinterval")).toString());
-                        shiftSet.put("gracePeriod", ((Integer) rs.getInt("graceperiod")).toString());
-                        shiftSet.put("dockPenalty", ((Integer) rs.getInt("dockpenalty")).toString());
-                        
-                        LocalTime lunchStart = rs.getTime("lunchstart").toLocalTime();
-                        LocalTime lunchStop = rs.getTime("lunchstop").toLocalTime();
-                        
-                        shiftSet.put("lunchStart", lunchStart.toString());
-                        shiftSet.put("lunchStop", lunchStop.toString());
-                        shiftSet.put("lunchThreshold", ((Integer) rs.getInt("lunchthreshold")).toString());
-                        
-                        Duration shiftDuration = Duration.between(shiftStart, shiftStop);
-                        
-                        if (shiftDuration.isNegative()) {
-                            
-                            LocalTime posDuration = shiftStart.minus(shiftDuration);
-                            shiftDuration = Duration.between(posDuration, shiftStart);
-                        }
-                        
-                        Duration lunchDuration = Duration.between(lunchStart, lunchStop);
-                        shiftSet.put("shiftDuration", shiftDuration.toString());
-                        shiftSet.put("lunchDuration", lunchDuration.toString());
-                        
-                        shift = new Shift(shiftSet);
+                        shift = new Shift(shiftSet, dailySchedule);
                     }
                 }
             }
@@ -179,5 +154,101 @@ public class ShiftDAO {
         }
 
         return shift;
+    }
+    
+    private DailySchedule findDailySchedule(int id) {
+        
+        DailySchedule dailySchedule = null;
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+
+            Connection conn = daoFactory.getConnection();
+
+            if (conn.isValid(0)) {
+
+                ps = conn.prepareStatement(QUERY_GET_DAILYSCHEDULE);
+                ps.setInt(1, id);
+
+                boolean hasresults = ps.execute();
+
+                if (hasresults) {
+
+                    rs = ps.getResultSet();
+
+                    while (rs.next()) {
+                        
+                        HashMap<String, String> dailyScheduleSet = new HashMap<>();
+                        
+                        dailyScheduleSet.put("id", ((Integer) id).toString());
+                        
+                        LocalTime shiftStart = rs.getTime("shiftstart").toLocalTime();
+                        LocalTime shiftStop = rs.getTime("shiftstop").toLocalTime();
+                        
+                        dailyScheduleSet.put("shiftStart", shiftStart.toString());
+                        dailyScheduleSet.put("shiftStop", shiftStop.toString());
+                        
+                        dailyScheduleSet.put("roundInterval", ((Integer) rs.getInt("roundinterval")).toString());
+                        dailyScheduleSet.put("gracePeriod", ((Integer) rs.getInt("graceperiod")).toString());
+                        dailyScheduleSet.put("dockPenalty", ((Integer) rs.getInt("dockpenalty")).toString());
+                        
+                        LocalTime lunchStart = rs.getTime("lunchstart").toLocalTime();
+                        LocalTime lunchStop = rs.getTime("lunchstop").toLocalTime();
+                        
+                        dailyScheduleSet.put("lunchStart", lunchStart.toString());
+                        dailyScheduleSet.put("lunchStop", lunchStop.toString());
+                        dailyScheduleSet.put("lunchThreshold", ((Integer) rs.getInt("lunchthreshold")).toString());
+                        
+                        Duration shiftDuration = Duration.between(shiftStart, shiftStop);
+                        
+                        if (shiftDuration.isNegative()) {
+                            
+                            LocalTime posDuration = shiftStart.minus(shiftDuration);
+                            shiftDuration = Duration.between(posDuration, shiftStart);
+                        }
+                        
+                        Duration lunchDuration = Duration.between(lunchStart, lunchStop);
+                        dailyScheduleSet.put("shiftDuration", shiftDuration.toString());
+                        dailyScheduleSet.put("lunchDuration", lunchDuration.toString());
+                        
+                        dailySchedule = new DailySchedule(dailyScheduleSet);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+
+            throw new DAOException(e.getMessage());
+
+        } finally {
+
+            if (rs != null) {
+                
+                try {
+                    
+                    rs.close();
+                    
+                } catch (SQLException e) {
+                    
+                    throw new DAOException(e.getMessage());
+                }
+            }
+            
+            if (ps != null) {
+                
+                try {
+                    
+                    ps.close();
+                    
+                } catch (SQLException e) {
+                    
+                    throw new DAOException(e.getMessage());
+                }
+            }
+        }
+
+        return dailySchedule;
     }
 }
