@@ -49,46 +49,35 @@ public final class DAOUtility {
         /* Return JSON String to caller */
         return json; 
     }
-    
-    public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift) {
-        
-    // iterate through the collection of punches - totaling up the number of minutes between pairs of "clock in" and "clock out" punches
-        // minus lunch break deductions
 
-        LocalTime clockIn_time = null;
+    public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift) {
+        LocalTime clockInTime = null;
         long minutesWorked = 0;
-        boolean clockIn = false;
+        boolean clockedIn = false;
         long lunchDuration = shift.getLunchDuration().toMinutes();
- =
+
         for (Punch punch : dailypunchlist) {
             switch (punch.getPunchtype()) {
                 case CLOCK_IN:
-                    clockIn = true;
-                    clockIn_time = punch.getAdjustedtimestamp().toLocalTime();
+                    clockedIn = true;
+                    clockInTime = punch.getAdjustedtimestamp().toLocalTime();
                     continue;
 
                 case CLOCK_OUT:
-                    System.out.println(clockIn_time + " : " + punch.getAdjustedtimestamp().toLocalTime() + " : " + minutesWorked);
-                    if (clockIn) {
-                        minutesWorked += clockIn_time.until(punch.getAdjustedtimestamp().toLocalTime(), ChronoUnit.MINUTES);
-
-                        if (minutesWorked >= shift.getLunchThreshold()) {
-                            minutesWorked -= lunchDuration;
-                            System.out.println("lunch deductions");
+                    if (clockedIn) {
+                        long timeBetween = clockInTime.until(punch.getAdjustedtimestamp().toLocalTime(), ChronoUnit.MINUTES);
+                        if (timeBetween >= shift.getLunchThreshold() && !(punch.isWeekend(punch.getAdjustedtimestamp()))) {
+                            minutesWorked += timeBetween - lunchDuration;
+                        } else {
+                            minutesWorked += timeBetween;
                         }
-
-
                     }
                     break;
             }
         }
-        return (int)minutesWorked;
-    // time between "clock in" and "time out" pairs should NOT be included in daily total (if it's a TIME_OUT)
-
-    // deduction for lunch should be made IF employee worked more than minimum minutes (even if they didn't clock out)
-        // deduction should NOT be made if employee didn't work enough minutes
-        
+        return (int) minutesWorked;
     }
+
     
     /*
     public static BigDecimal calculateAbsenteeism(ArrayList<Punch> punchlist, Shift s) {
