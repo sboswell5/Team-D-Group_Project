@@ -22,7 +22,6 @@ public class DAOProperties {
         }
 
     }
-
     public DAOProperties(String prefix) {
 
         this.prefix = prefix;
