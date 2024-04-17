@@ -125,47 +125,12 @@ public final class DAOUtility {
         double actualMinutes = calculateTotalMinutes(punchlist, s);
         double scheduledMinutes = 0; 
         
-        //LocalDate start = punchlist.get(0).getAdjustedtimestamp().toLocalDate();
-        //LocalDate end = punchlist.get(punchlist.size() - 1).getAdjustedtimestamp().toLocalDate();
-        
-        /*for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)){
-            
-            if (!isWeekend(date)) {
-                
-                scheduledMinutes += s.getShiftDuration().toMinutes();
-            }
-        }*/
-        
         for (int i = 1; i <= 5; i++) {
             
             scheduledMinutes += (s.getShiftDuration().toMinutes() - s.getLunchDuration().toMinutes());
-            //System.out.println(scheduledMinutes);
-            //System.out.println(s.getShiftDuration());
         }
-        
-        //System.out.println(scheduledMinutes);
-        //System.out.println(actualMinutes);
-        
+   
         double absenteeism = ((scheduledMinutes - actualMinutes) / scheduledMinutes) * 100;
-        
-        //System.out.println(absenteeism);
-        //System.out.println(BigDecimal.valueOf(absenteeism));
-        
         return BigDecimal.valueOf(absenteeism);
     }
-    
-    /*private static boolean isWeekend(LocalDate date) {
-        
-        boolean isWeekend = false;
-        DayOfWeek dayOfWeek = date.getDayOfWeek();
-        
-        System.out.println(dayOfWeek);
-        
-        if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
-            
-            isWeekend = true;
-        }
-        
-        return isWeekend;
-    }*/
 }

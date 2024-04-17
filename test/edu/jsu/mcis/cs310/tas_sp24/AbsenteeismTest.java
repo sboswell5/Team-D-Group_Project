@@ -67,9 +67,9 @@ public class AbsenteeismTest {
         absenteeismDAO.create(a1);
         
         /* Retrieve Absenteeism From Database */
-        
+ 
         Absenteeism a2 = absenteeismDAO.find(e, ts);
-        
+       
         /* Compare to Expected Value */
         
         assertEquals("#28DC3FB8 (Pay Period Starting 09-02-2018): 2.50%", a2.toString());
@@ -162,13 +162,11 @@ public class AbsenteeismTest {
         
         Absenteeism a1 = new Absenteeism(e, ts, percentage);
         absenteeismDAO.create(a1);
-        //System.out.println(a1);
-        
+       
         /* Retrieve Absenteeism From Database */
         
         Absenteeism a2 = absenteeismDAO.find(e, ts);
-        //System.out.println(a2);
-        
+     
         /* Compare to Expected Value */
         
         assertEquals("#08D01475 (Pay Period Starting 09-16-2018): -28.75%", a2.toString());

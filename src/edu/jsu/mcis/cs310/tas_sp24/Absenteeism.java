@@ -2,7 +2,9 @@ package edu.jsu.mcis.cs310.tas_sp24;
 
 import java.time.LocalDate;
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 
 public class Absenteeism {
 
@@ -14,7 +16,7 @@ public class Absenteeism {
     public Absenteeism(Employee employee, LocalDate localDate, BigDecimal bigDecimal) {
         
         this.employee = employee;
-        this.localDate = localDate;
+        this.localDate = localDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         this.bigDecimal = bigDecimal;
     }
 
@@ -38,14 +40,10 @@ public class Absenteeism {
         // Get the correct format
         String formattedDate = localDate.format(formatter);
         
-        // build string "#28DC3FB8 (Pay Period Starting 09-02-2018): 2.50%"
-        
         s.append('#').append(employee.getBadge().getId()).append(' ');
         s.append("(Pay Period Starting ").append(formattedDate).append("): ");
-        s.append(getBigDecimal());
+        s.append(String.format("%.2f%%", getBigDecimal()));
         
-        //System.out.println(getBigDecimal());
-
         return s.toString();
     }
 }

@@ -14,9 +14,14 @@ public class AbsenteeismDAO {
     //private static final String QUERY_REPLACE = "REPLACE INTO absenteeism (employeeid, payperiod, percentage) VALUES (?, ?, ?)"; // look into
     
     // possibly do delete if match and then insert if not exist
-    private static final String QUERY_DELETE = "DELETE FROM absenteeism WHERE employeeid = ? AND payperiod = ?";
-    private static final String QUERY_INSERT = "INSERT INTO absenteeism (employeeid, payperiod, percentage) VALUES (?, ?, ?)";
+    //private static final String QUERY_DELETE = "DELETE FROM absenteeism WHERE employeeid = ? AND payperiod = ?";
+    //private static final String QUERY_INSERT = "INSERT INTO absenteeism (employeeid, payperiod, percentage) VALUES (?, ?, ?)";
 
+    //private static final String QUERY_UPDATE = "UPDATE absenteeism SET percentage = ? WHERE employeeid = ? AND payperiod = ?";
+    
+    // Try this one?
+    private static final String QUERY_UPDATE = "INSERT INTO absenteeism (employeeid, payperiod, percentage) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE percentage = ?";
+    
     private final DAOFactory daoFactory;
 
     AbsenteeismDAO(DAOFactory daoFactory) {
@@ -36,13 +41,13 @@ public class AbsenteeismDAO {
             
             if (conn.isValid(0)) {
                 
+                // Adjust the time to go to the start of the pay period
+                LocalDate payPeriodStart = localDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+                
                 ps = conn.prepareStatement(QUERY_FIND);
                 ps.setInt(1, employee.getId());
-                ps.setDate(2, Date.valueOf(localDate));
-                
-                System.out.println(employee.getId());
-                System.out.println(Date.valueOf(localDate));
-                
+                ps.setDate(2, Date.valueOf(payPeriodStart));
+              
                 boolean hasresults = ps.execute();
                 
                 if (hasresults) {
@@ -51,10 +56,11 @@ public class AbsenteeismDAO {
               
                     while (rs.next()) {
                         
-                        LocalDate payPeriod = rs.getDate("payperiod").toLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+                        LocalDate payPeriod = rs.getDate("payperiod").toLocalDate();
                         BigDecimal percentage = rs.getBigDecimal("percentage");
-                        
+                     
                         absenteeism = new Absenteeism(employee, payPeriod, percentage);
+                        System.out.println(absenteeism);
                     }
                 }
             }
@@ -93,6 +99,18 @@ public class AbsenteeismDAO {
             Connection conn = daoFactory.getConnection();
 
             if (conn.isValid(0)) {
+                
+                ps = conn.prepareStatement(QUERY_UPDATE);
+                LocalDate payPeriodStart = absenteeism.getLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+            
+                ps.setInt(1, absenteeism.getEmployee().getId());
+                ps.setDate(2, Date.valueOf(payPeriodStart));
+                ps.setBigDecimal(3, absenteeism.getBigDecimal());
+                
+                ps.setBigDecimal(4, absenteeism.getBigDecimal());
+                
+                ps.executeUpdate();
+            }
 
                 /*ps = conn.prepareStatement(QUERY_REPLACE);
                 
@@ -102,7 +120,35 @@ public class AbsenteeismDAO {
                 
                 ps.executeUpdate();*/
                 
-                PreparedStatement dps = conn.prepareStatement(QUERY_DELETE);
+                /*Absenteeism existingAbsenteeism = find(absenteeism.getEmployee(), absenteeism.getLocalDate());
+                
+                if (existingAbsenteeism != null) {
+                    
+                    BigDecimal newPercentage = absenteeism.getBigDecimal();
+                    LocalDate payPeriodStart = absenteeism.getLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+                    
+                    ps = conn.prepareStatement(QUERY_UPDATE);
+                    
+                    ps.setBigDecimal(1, newPercentage);
+                    ps.setInt(2, absenteeism.getEmployee().getId());
+                    ps.setDate(3, Date.valueOf(payPeriodStart));
+                    
+                    ps.executeUpdate();
+                
+                } else {
+                    
+                    ps = conn.prepareStatement(QUERY_INSERT);
+                    LocalDate payPeriodStart = absenteeism.getLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+                
+                    ps.setInt(1, absenteeism.getEmployee().getId());
+                    ps.setDate(2, Date.valueOf(payPeriodStart));
+                    ps.setBigDecimal(3, absenteeism.getBigDecimal());
+                    
+                    ps.executeUpdate();
+                }
+            }*/
+                
+                /*PreparedStatement dps = conn.prepareStatement(QUERY_DELETE);
                 PreparedStatement ips = conn.prepareStatement(QUERY_INSERT);
                 
                 LocalDate payPeriodStart = absenteeism.getLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
@@ -120,7 +166,7 @@ public class AbsenteeismDAO {
                 
                     ips.executeUpdate();
                 }
-            }
+            }*/
                 
         } catch (SQLException e) {
 
