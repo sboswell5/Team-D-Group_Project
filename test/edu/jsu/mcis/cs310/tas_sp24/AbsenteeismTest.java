@@ -162,10 +162,12 @@ public class AbsenteeismTest {
         
         Absenteeism a1 = new Absenteeism(e, ts, percentage);
         absenteeismDAO.create(a1);
+        //System.out.println(a1);
         
         /* Retrieve Absenteeism From Database */
         
         Absenteeism a2 = absenteeismDAO.find(e, ts);
+        //System.out.println(a2);
         
         /* Compare to Expected Value */
         

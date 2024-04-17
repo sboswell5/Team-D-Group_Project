@@ -83,6 +83,5 @@ public class Shift {
         s.append(" (").append(lunchDuration.toMinutes()).append(" minutes)");
 
         return s.toString();
-
     }
 }

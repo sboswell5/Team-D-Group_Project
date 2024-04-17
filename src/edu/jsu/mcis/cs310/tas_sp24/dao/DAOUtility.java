@@ -36,8 +36,8 @@ public final class DAOUtility {
             punchData.put("terminalid", String.valueOf(dlp.getTerminalid()));
             punchData.put("punchtype", String.valueOf(dlp.getPunchtype()));
             punchData.put("adjustmenttype", String.valueOf(dlp.getAdjustmenttype()));
-            //punchData.put("originaltimestamp", String.valueOf(dlp.formatDate(dlp.getOriginaltimestamp())));
-            //punchData.put("adjustedtimestamp", String.valueOf(dlp.formatDate(dlp.getAdjustedtimestamp())));
+            punchData.put("originaltimestamp", String.valueOf(dlp.getOriginaltimestamp().format(dlp.formatter).toUpperCase()));
+            punchData.put("adjustedtimestamp", String.valueOf(dlp.getAdjustedtimestamp().format(dlp.formatter).toUpperCase()));
 
             /* Append HashMap to ArrayList */
             jsonData.add(punchData);
@@ -48,6 +48,48 @@ public final class DAOUtility {
         
         /* Return JSON String to caller */
         return json; 
+    }
+    
+    public static String getPunchListPlusTotalsAsJSON(ArrayList<Punch> punchlist, Shift shift) {
+        
+        /* Create ArrayList Object */
+        ArrayList<HashMap<String, String>> PunchListData = new ArrayList<>();
+        
+        /* Create Json Object */
+        JsonObject jsonData = new JsonObject();
+        
+        /* Calculate Total Minutes & Absenteeism */
+        int minutes = calculateTotalMinutes(punchlist, shift);
+        BigDecimal percentage = calculateAbsenteeism(punchlist, shift);
+        String absenteeism = String.format("%.2f%%", percentage);
+        
+        for (Punch p : punchlist) {
+            /* Create HashMap Object (one for every Punch!) */
+            HashMap<String, String> punchData = new HashMap<>();
+            
+            /* Add Punch Data to HashMap */
+            punchData.put("id", String.valueOf(p.getId()));
+            punchData.put("badgeid", String.valueOf(p.getBadge().getId()));
+            punchData.put("terminalid", String.valueOf(p.getTerminalid()));
+            punchData.put("punchtype", String.valueOf(p.getPunchtype()));
+            punchData.put("adjustmenttype", String.valueOf(p.getAdjustmenttype()));
+            punchData.put("originaltimestamp", String.valueOf(p.getOriginaltimestamp().format(p.formatter).toUpperCase()));
+            punchData.put("adjustedtimestamp", String.valueOf(p.getAdjustedtimestamp().format(p.formatter).toUpperCase()));
+
+            /* Append HashMap to ArrayList */
+            PunchListData.add(punchData);
+        }
+        
+        jsonData.put("punchlist", PunchListData);
+        jsonData.put("totalminutes", minutes);
+        jsonData.put("absenteeism", absenteeism);
+      
+        /* Encode into JSON String */
+        String json = Jsoner.serialize(jsonData);
+        
+        /* Return JSON String to caller */
+        return json; 
+        
     }
 
     public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift) {
@@ -77,13 +119,53 @@ public final class DAOUtility {
         }
         return (int) minutesWorked;
     }
-
     
-    /*
     public static BigDecimal calculateAbsenteeism(ArrayList<Punch> punchlist, Shift s) {
-        int scheduledMinutes = calculateTotalMinutes(shift), actualMinutes = calculateTotalMinutes(punch);
-        BigDecimal absenteeism = (scheduledMinutes / actualMinutes) - 100;
         
-        return absenteeism;
+        double actualMinutes = calculateTotalMinutes(punchlist, s);
+        double scheduledMinutes = 0; 
+        
+        //LocalDate start = punchlist.get(0).getAdjustedtimestamp().toLocalDate();
+        //LocalDate end = punchlist.get(punchlist.size() - 1).getAdjustedtimestamp().toLocalDate();
+        
+        /*for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)){
+            
+            if (!isWeekend(date)) {
+                
+                scheduledMinutes += s.getShiftDuration().toMinutes();
+            }
+        }*/
+        
+        for (int i = 1; i <= 5; i++) {
+            
+            scheduledMinutes += (s.getShiftDuration().toMinutes() - s.getLunchDuration().toMinutes());
+            //System.out.println(scheduledMinutes);
+            //System.out.println(s.getShiftDuration());
+        }
+        
+        //System.out.println(scheduledMinutes);
+        //System.out.println(actualMinutes);
+        
+        double absenteeism = ((scheduledMinutes - actualMinutes) / scheduledMinutes) * 100;
+        
+        //System.out.println(absenteeism);
+        //System.out.println(BigDecimal.valueOf(absenteeism));
+        
+        return BigDecimal.valueOf(absenteeism);
+    }
+    
+    /*private static boolean isWeekend(LocalDate date) {
+        
+        boolean isWeekend = false;
+        DayOfWeek dayOfWeek = date.getDayOfWeek();
+        
+        System.out.println(dayOfWeek);
+        
+        if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
+            
+            isWeekend = true;
+        }
+        
+        return isWeekend;
     }*/
 }

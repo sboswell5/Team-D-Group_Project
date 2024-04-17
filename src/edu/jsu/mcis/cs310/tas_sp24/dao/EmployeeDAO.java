@@ -60,7 +60,7 @@ public class EmployeeDAO {
                         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                         LocalDateTime active = LocalDateTime.parse(rs.getString("active"), dtf);
                         Department department = departmentDAO.find(rs.getInt("departmentid"));
-                        Shift shift = shiftDAO.find(rs.getInt("id"));
+                        Shift shift = shiftDAO.find(rs.getInt("shiftid"));
 
                         int employeeTypeNum = rs.getInt("employeetypeid");
                         EmployeeType employeeType = null;
