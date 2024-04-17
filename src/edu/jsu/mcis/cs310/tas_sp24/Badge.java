@@ -24,7 +24,7 @@ public class Badge {
         }
         this.id = hexString;
         
-        //System.out.println("|" + hexString + "|");
+        System.out.println(hexString);
     }
 
     public String getId() {

@@ -89,8 +89,11 @@ public class BadgeDAO {
 
                 ps = conn.prepareStatement(QUERY_INSERT, Statement.RETURN_GENERATED_KEYS);
                 
-                ps.setString(1, badge.getDescription());
-                ps.setString(2, badge.getId());
+                System.out.println(badge.getDescription());
+                
+                
+                ps.setString(1, badge.getId());
+                ps.setString(2, badge.getDescription());
                
                 int rowsInserted = ps.executeUpdate();
 
