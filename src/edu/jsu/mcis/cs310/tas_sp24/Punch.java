@@ -86,18 +86,18 @@ public class Punch {
 
                 if (originalTimestamp.toLocalTime().isAfter(shiftstart.minusMinutes(roundInterval)) && originalTimestamp.toLocalTime().isBefore(shiftstart)) {
                     adjustmenttype = PunchAdjustmentType.SHIFT_START;
-                    adjustedtimestamp = LocalDateTime.of(placeholder, shiftstart);
+                    adjustedtimestamp = LocalDateTime.of(placeholder, shiftstart).withSecond(0).withNano(0);
 
                 } else if (originalTimestamp.toLocalTime().isBefore(shiftstart.minusMinutes(roundInterval))) {
-                    adjustedtimestamp = LocalDateTime.of(placeholder, roundOutsideInterval(originalTimestamp.toLocalTime(), roundInterval));
+                    adjustedtimestamp = LocalDateTime.of(placeholder, roundOutsideInterval(originalTimestamp.toLocalTime(), roundInterval)).withSecond(0).withNano(0);
 
                 } else if (originalTimestamp.toLocalTime().isBefore(shiftstart.plusMinutes(gracePeriod))) {
                     adjustmenttype = PunchAdjustmentType.SHIFT_START;
-                    adjustedtimestamp = LocalDateTime.of(placeholder, shiftstart);
+                    adjustedtimestamp = LocalDateTime.of(placeholder, shiftstart).withSecond(0).withNano(0);
 
                 } else if (originalTimestamp.toLocalTime().isAfter(shiftstart.plusMinutes(gracePeriod)) && originalTimestamp.toLocalTime().isBefore(lunchstart)) {
                     adjustmenttype = PunchAdjustmentType.SHIFT_DOCK;
-                    adjustedtimestamp = LocalDateTime.of(placeholder, shiftstart.plusMinutes(dockPenalty));
+                    adjustedtimestamp = LocalDateTime.of(placeholder, shiftstart.plusMinutes(dockPenalty)).withSecond(0).withNano(0);
                 }
             }
 
