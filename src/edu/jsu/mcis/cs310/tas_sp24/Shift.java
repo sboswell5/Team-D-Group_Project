@@ -8,11 +8,28 @@ public class Shift {
     private final String description;
     private final Integer id;
     private final DailySchedule defaultschedule;
+    public HashMap<Integer, DailySchedule> scheduleList;
     
     public Shift(HashMap<String, String> shift, DailySchedule dailySchedule) {
         this.id = Integer.valueOf(shift.get("id"));
         this.description = shift.get("description");
         this.defaultschedule = dailySchedule;
+        addSchedules();
+    }
+
+    public void addSchedules() {
+        for (int i = 1; i <= 5; i++) {
+            scheduleList.put(i, this.defaultschedule);
+        }
+    }
+
+    public DailySchedule getDailyschedule(DayOfWeek dayOfWeek) {
+        for(int i = 0; i < scheduleList.size(); i++) {
+            if(scheduleList.containsKey(i)) {
+                return scheduleList.get(i);
+            }
+        }
+        return defaultschedule;
     }
     
     public String getDescription() {

@@ -156,6 +156,14 @@ public class ShiftDAO {
 
         return shift;
     }
+
+    private Shift find(Badge badge, LocalDate date) {
+
+        Shift shift = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+    }
     
     private DailySchedule findDailySchedule(int id) {
         
