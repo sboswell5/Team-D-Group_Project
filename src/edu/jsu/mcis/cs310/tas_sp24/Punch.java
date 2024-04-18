@@ -189,7 +189,7 @@ public class Punch {
 
                 } else if (originalTimestamp.toLocalTime().isAfter(shiftstart.plusMinutes(gracePeriod)) && originalTimestamp.toLocalTime().isBefore(lunchstart)) {
                     adjustmenttype = PunchAdjustmentType.SHIFT_DOCK;
-                    adjustedtimestamp = LocalDateTime.of(placeholder, shiftstart.plusMinutes(dockPenalty));
+                    adjustedtimestamp = LocalDateTime.of(placeholder, shiftstart.plusMinutes(dockPenalty)).withSecond(0).withNano(0);
                 }
             }
 

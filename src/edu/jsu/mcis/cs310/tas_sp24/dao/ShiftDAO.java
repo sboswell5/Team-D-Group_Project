@@ -53,8 +53,9 @@ public class ShiftDAO {
                         
                         int dailyScheduleId = rs.getInt("dailyscheduleid");
                         DailySchedule dailySchedule = findDailySchedule(dailyScheduleId);
-                        
+                        //System.out.println(dailySchedule);
                         shift = new Shift(shiftSet, dailySchedule);
+
                     }
                 }
             }
@@ -155,6 +156,14 @@ public class ShiftDAO {
 
         return shift;
     }
+
+    private Shift find(Badge badge, LocalDate date) {
+
+        Shift shift = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+    }
     
     private DailySchedule findDailySchedule(int id) {
         
@@ -185,6 +194,7 @@ public class ShiftDAO {
                         dailyScheduleSet.put("id", ((Integer) id).toString());
                         
                         LocalTime shiftStart = rs.getTime("shiftstart").toLocalTime();
+                        System.out.println(shiftStart);
                         LocalTime shiftStop = rs.getTime("shiftstop").toLocalTime();
                         
                         dailyScheduleSet.put("shiftStart", shiftStart.toString());
