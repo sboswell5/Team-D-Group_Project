@@ -8,15 +8,38 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
+/**
+ * Data Access Object for the employee section of the database
+ * 
+ * @author Ryan
+ */
+
 public class EmployeeDAO {
 
+    /**
+     * Query that finds employee data by employee id
+     */
     private static final String QUERY_FIND = "SELECT * FROM employee WHERE id = ?";
+    /**
+     * Query that finds employee data by badge id
+     */
     private static final String QUERY_FIND2 = "SELECT * FROM employee WHERE badgeid = ?";
+    
+    /**
+     * DAO fields
+     */
     private final DAOFactory daoFactory;
     private final ShiftDAO shiftDAO;
     private final DepartmentDAO departmentDAO;
     private final BadgeDAO badgeDAO;
     
+    /**
+     * Creates the EmployeeDAO
+     * @param daoFactory passes access to the daoFactory
+     * @param shiftDAO passes access to shiftDAO
+     * @param departmentDAO passes access to departmentDAO
+     * @param badgeDAO passes access to badgeDAO
+     */
     EmployeeDAO(DAOFactory daoFactory, ShiftDAO shiftDAO, DepartmentDAO departmentDAO, BadgeDAO badgeDAO) {
         
         this.daoFactory = daoFactory;
@@ -25,6 +48,11 @@ public class EmployeeDAO {
         this.badgeDAO = badgeDAO;
     }
 
+    /**
+     * Finds the employee data based on the employee id
+     * @param id the employee id
+     * @return the employee data object
+     */
     public Employee find(Integer id) {
 
         Employee employee = null;
@@ -132,6 +160,11 @@ public class EmployeeDAO {
         return employee;
     }
     
+    /**
+     * Finds the employee data based on the employee's badge id
+     * @param badge the employee's badge id
+     * @return the employee data object
+     */
     public Employee find(Badge badge) {
 
         Employee employee = null;

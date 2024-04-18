@@ -1,5 +1,10 @@
 package edu.jsu.mcis.cs310.tas_sp24;
 
+/**
+ * Simple enum that shows if an employee is full-time or part-time
+ * @author Ryan
+ */
+
 public enum EmployeeType {
 
     PART_TIME("Temporary / Part-Time"),
