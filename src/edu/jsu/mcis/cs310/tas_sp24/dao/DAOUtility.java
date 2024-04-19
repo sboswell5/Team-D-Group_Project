@@ -16,12 +16,13 @@ import java.math.BigDecimal;
  */
 public final class DAOUtility {
     
+    /**
+     * Converts a list of Punch objects into a JSON string.
+     * @param dailypunchlist the list of Punch objects to be converted
+     * @return a JSON string with the list of Punch objects
+     * @author Madelyn
+     */
     public static String getPunchListAsJSON(ArrayList<Punch> dailypunchlist) {
-        
-        // Should iterate through the list (dailypunchlist)
-        // Copy the data for each punch into an ArrayList of HashMaps
-        // Encode as JSON string
-        // Return string to caller
         
         /* Create ArrayList Object */
         ArrayList<HashMap<String, String>> jsonData = new ArrayList<>();
@@ -50,6 +51,13 @@ public final class DAOUtility {
         return json; 
     }
     
+    /**
+     * Converts a list of Punch objects and their total minutes and absenteeism into a JSON string.
+     * @param punchlist the list of Punch objects to be converted
+     * @param shift the shift of the employee who's punch is being used
+     * @return a JSON string with the list of Punch objects and their total minutes and absenteeism
+     * @author Madelyn
+     */
     public static String getPunchListPlusTotalsAsJSON(ArrayList<Punch> punchlist, Shift shift) {
         
         /* Create ArrayList Object */
@@ -89,9 +97,15 @@ public final class DAOUtility {
         
         /* Return JSON String to caller */
         return json; 
-        
     }
 
+    /**
+     * Calculates the total minutes worked by an employee for a given day.
+     * @param dailypunchlist the list of Punch objects
+     * @param shift the shift of the employee who's punch is being used
+     * @return the total minutes for a day
+     * @author Ryan
+     */
     public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift) {
         
         LocalTime clockInTime = null;
@@ -100,6 +114,7 @@ public final class DAOUtility {
         long lunchDuration = shift.getLunchDuration().toMinutes();
 
         for (Punch punch : dailypunchlist) {
+            
             switch (punch.getPunchtype()) {
                 
                 case CLOCK_IN:
@@ -129,6 +144,13 @@ public final class DAOUtility {
         return (int) minutesWorked;
     }
     
+    /**
+     * Calculates the absenteeism for a given employee for a given period.
+     * @param punchlist the list of Punch objects representing daily punches
+     * @param s the shift of the employee who's absenteeism is being calculated
+     * @return the absenteeism percentage as a BigDecimal
+     * @author Madelyn
+     */
     public static BigDecimal calculateAbsenteeism(ArrayList<Punch> punchlist, Shift s) {
         
         double actualMinutes = calculateTotalMinutes(punchlist, s);

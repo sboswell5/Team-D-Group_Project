@@ -3,8 +3,25 @@ package edu.jsu.mcis.cs310.tas_sp24;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Punch class that handles the creation, adjusting, and printing of punches.
+ * @author Madelyn
+ * @author Ryan
+ * @author Shelby
+ */
 public class Punch {
     
+    /**
+     * terminalId - the id of the terminal the punch is done at
+     * id - the id of the punch itself
+     * badge - the unique number assigned to each employee
+     * punchType - the type of punch
+     * originalTimestamp - the timestamp of the punch before it is adjusted
+     * adjustedTimestamp - the timestamp of the punch after it is adjusted
+     * adjustmentType - the type of adjustment
+     * formatter - the format that the date and time should be in
+     * @author Madelyn
+     */
     private final int terminalId;
     private int id;
     private final Badge badge;
@@ -13,7 +30,13 @@ public class Punch {
     private PunchAdjustmentType adjustmentType;
     public final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MM/dd/yyyy HH:mm:ss");
 
-    // Constructor to make a punch
+    /**
+     * Constructor to make a new punch.
+     * @param terminalId passes the terminal id into the constructor
+     * @param badge passes the badge into the constructor
+     * @param punchType passes the punchType into the constructor
+     * originalTimestamp - initializes the timestamp for a punch
+     */
     public Punch(int terminalId, Badge badge, EventType punchType) {
 
         this.terminalId = terminalId;
@@ -22,7 +45,14 @@ public class Punch {
         this.originalTimestamp = LocalDateTime.now();
     }
     
-    // Constructor for existing punches
+    /**
+     * Constructor for existing punches.
+     * @param id passes the punch id into the constructor
+     * @param terminalId passes the terminal id into the constructor
+     * @param badge passes the badge into the constructor
+     * @param originalTimestamp passes the original timestamp into the constructor
+     * @param punchType passes the punch type into the constructor
+     */
     public Punch(int id, int terminalId, Badge badge, LocalDateTime originalTimestamp, EventType punchType) {
         
         this.id = id;
@@ -32,6 +62,12 @@ public class Punch {
         this.punchType = punchType; 
     }
     
+    /**
+     * Adjusts a punch to a certain time based on specific rules.
+     * @param s the specific shift of an employee that will make a punch
+     * @author Ryan
+     * @author Shelby
+     */
     public void adjust(Shift s) {
         
         adjustedTimestamp = originalTimestamp;
@@ -180,7 +216,12 @@ public class Punch {
         }
     }
     
-    // Checks to see if the day is a weekend
+    /**
+     * Simple method to check if the day of the week is a weekend.
+     * @param day the day of the week to be checked
+     * @return true is the day is a weekend and false if the day is a weekday
+     * @author Shelby
+     */
     public boolean isWeekend(LocalDateTime day){
         
         boolean weekend = false;
@@ -193,6 +234,13 @@ public class Punch {
        return weekend;
     }
 
+    /**
+     * Method to round punches to the nearest interval as specified by the database.
+     * @param originalTimestamp the timestamp to be adjusted 
+     * @param roundInterval the interval specified by the database that punches should be round to
+     * @return the adjusted timestamp 
+     * @author Ryan
+     */
     public LocalTime roundOutsideInterval(LocalTime originalTimestamp, int roundInterval) {
         
         if (originalTimestamp.getMinute() % roundInterval == 0) { 
@@ -216,46 +264,74 @@ public class Punch {
         return originalTimestamp;
     }
     
+    /**
+     * @return terminalId
+     */
     public int getTerminalid() {
         
         return terminalId;
     }
     
+    /**
+     * @return id
+     */
     public int getId() {
         
         return id;
     }
 
+    /**
+     * @return badge
+     */
     public Badge getBadge() {
         
         return badge;
     }
     
+    /**
+     * @return punchType
+     */
     public EventType getPunchtype() {
         
         return punchType;
     }
     
+    /**
+     * @return originalTimestamp
+     */
     public LocalDateTime getOriginaltimestamp() {
         
         return originalTimestamp;
     }
     
+    /**
+     * @return adjustedTimestamp
+     */
     public LocalDateTime getAdjustedtimestamp() {
         
         return adjustedTimestamp;
     }
 
+    /**
+     * @return adjustmentType
+     */
     public PunchAdjustmentType getAdjustmenttype() {
         
         return adjustmentType;
     }
     
+    /**
+     * Sets the originalTimestamp.
+     * @param originalTimestamp the original timestamp of a punch
+     */
     public void setOriginalTimestamp(LocalDateTime originalTimestamp) {
         
         this.originalTimestamp = originalTimestamp;
     }
     
+    /**
+     * @return the original timestamp of a punch, its punch type, and the badge of the person who made it in a formatted string to satisfy tests
+     */
     public String printOriginal() {
 
         StringBuilder s = new StringBuilder();
@@ -273,6 +349,9 @@ public class Punch {
         return s.toString();
     }
     
+    /**
+     * @return the adjusted timestamp of a punch, its punch type, the adjustment type, and the badge of the person who made it in a formatted string to satisfy tests
+     */
     public String printAdjusted() {
         
         StringBuilder s = new StringBuilder();
@@ -284,6 +363,10 @@ public class Punch {
         return s.toString();
     }
     
+    /**
+     * Overrides the toString() method
+     * @return the formatted original timestamp 
+     */
     @Override
     public String toString() {
         
