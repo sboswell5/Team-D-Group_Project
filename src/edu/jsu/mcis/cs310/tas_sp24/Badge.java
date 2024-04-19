@@ -26,7 +26,5 @@ public class Badge {
         s.append('(').append(description).append(')');
 
         return s.toString();
-
     }
-
 }
