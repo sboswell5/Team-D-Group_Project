@@ -135,5 +135,129 @@ public class TimeAccruedTest {
         assertEquals(540, m);
 
     }
+    
+    // Added test
+    @Test
+    public void testAccruedExtra1() {
+        
+        PunchDAO punchDAO = daoFactory.getPunchDAO();
+        ShiftDAO shiftDAO = daoFactory.getShiftDAO();
+
+        /* Get Punch/Badge/Shift Objects */
+
+        Punch p = punchDAO.find(147);
+        Badge b = p.getBadge();
+        Shift s = shiftDAO.find(b);
+        
+        /* Get/Adjust Punch List */
+
+        ArrayList<Punch> dailypunchlist = punchDAO.list(b, p.getOriginaltimestamp().toLocalDate());
+
+        for (Punch punch : dailypunchlist) {
+            punch.adjust(s);
+        }
+
+        /* Compute Pay Period Total */
+        
+        int m = DAOUtility.calculateTotalMinutes(dailypunchlist, s);
+
+        /* Compare to Expected Value */
+        
+        assertEquals(555, m);
+
+    }
+    
+    // Added test
+    @Test
+    public void testAccruedExtra2() {
+        
+        PunchDAO punchDAO = daoFactory.getPunchDAO();
+        ShiftDAO shiftDAO = daoFactory.getShiftDAO();
+
+        /* Get Punch/Badge/Shift Objects */
+
+        Punch p = punchDAO.find(3731);
+        Badge b = p.getBadge();
+        Shift s = shiftDAO.find(b);
+        
+        /* Get/Adjust Punch List */
+
+        ArrayList<Punch> dailypunchlist = punchDAO.list(b, p.getOriginaltimestamp().toLocalDate());
+
+        for (Punch punch : dailypunchlist) {
+            punch.adjust(s);
+        }
+
+        /* Compute Pay Period Total */
+        
+        int m = DAOUtility.calculateTotalMinutes(dailypunchlist, s);
+
+        /* Compare to Expected Value */
+        
+        assertEquals(510, m);
+
+    }
+    
+    // Added test
+    @Test
+    public void testAccruedExtra3() {
+        
+        PunchDAO punchDAO = daoFactory.getPunchDAO();
+        ShiftDAO shiftDAO = daoFactory.getShiftDAO();
+
+        /* Get Punch/Badge/Shift Objects */
+
+        Punch p = punchDAO.find(5742);
+        Badge b = p.getBadge();
+        Shift s = shiftDAO.find(b);
+        
+        /* Get/Adjust Punch List */
+
+        ArrayList<Punch> dailypunchlist = punchDAO.list(b, p.getOriginaltimestamp().toLocalDate());
+
+        for (Punch punch : dailypunchlist) {
+            punch.adjust(s);
+        }
+
+        /* Compute Pay Period Total */
+        
+        int m = DAOUtility.calculateTotalMinutes(dailypunchlist, s);
+
+        /* Compare to Expected Value */
+        
+        assertEquals(660, m);
+
+    }
+    
+    // Added test
+    @Test
+    public void testAccruedExtra4() {
+        
+        PunchDAO punchDAO = daoFactory.getPunchDAO();
+        ShiftDAO shiftDAO = daoFactory.getShiftDAO();
+
+        /* Get Punch/Badge/Shift Objects */
+
+        Punch p = punchDAO.find(5964);
+        Badge b = p.getBadge();
+        Shift s = shiftDAO.find(b);
+        
+        /* Get/Adjust Punch List */
+
+        ArrayList<Punch> dailypunchlist = punchDAO.list(b, p.getOriginaltimestamp().toLocalDate());
+
+        for (Punch punch : dailypunchlist) {
+            punch.adjust(s);
+        }
+
+        /* Compute Pay Period Total */
+        
+        int m = DAOUtility.calculateTotalMinutes(dailypunchlist, s);
+
+        /* Compare to Expected Value */
+        
+        assertEquals(600, m);
+
+    }
 
 }

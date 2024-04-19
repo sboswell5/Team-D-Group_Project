@@ -9,13 +9,6 @@ import java.time.*;
 import java.sql.*;
 import java.util.ArrayList;
 
-// Finished find();
-// Added default case to switch
-// Added create();
-// Added insertPunch(); to go along with create();
-// create() good now :)
-// list() for single day & range of days works
-
 public class PunchDAO {
     
     private static final String QUERY_INSERT = "INSERT INTO event (terminalid, badgeid, timestamp, eventtypeid) VALUES (?, ?, ?, ?)";
@@ -143,7 +136,6 @@ public class PunchDAO {
 
             if (conn.isValid(0)) {
 
-                // add query to top (string)
                 ps = conn.prepareStatement(QUERY_INSERT, Statement.RETURN_GENERATED_KEYS);
                 
                 ps.setInt(1, punch.getTerminalid());
@@ -235,9 +227,8 @@ public class PunchDAO {
                         
                         punchList.add(punch);
                     }
-                    
-                    // don't assume even number of punches
-                    while (punchList.size()%2 != 0) {
+            
+                    while (punchList.size() % 2 != 0) {
                         
                         localDate = localDate.plusDays(1);
                         punchList.add(closeClockInPair(badge, localDate));
@@ -350,14 +341,14 @@ public class PunchDAO {
     }
     
     // Second list() method for a range of dates
-    // add query to ensure the loop isn't infinite (instead return empty list) if values were switched (RESOLVED)
     public ArrayList<Punch> list(Badge badge, LocalDate begin, LocalDate end) {
         
         ArrayList<Punch> rangedPunchList = new ArrayList<>();
         
         // Check if begin date is after end date.
         if (begin.isAfter(end)){
-            // return empty list.
+            
+            // return empty list
             return rangedPunchList;
         }
         

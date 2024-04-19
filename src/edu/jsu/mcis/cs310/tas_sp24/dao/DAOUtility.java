@@ -93,6 +93,7 @@ public final class DAOUtility {
     }
 
     public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift) {
+        
         LocalTime clockInTime = null;
         long minutesWorked = 0;
         boolean clockedIn = false;
@@ -100,23 +101,31 @@ public final class DAOUtility {
 
         for (Punch punch : dailypunchlist) {
             switch (punch.getPunchtype()) {
+                
                 case CLOCK_IN:
+                    
                     clockedIn = true;
                     clockInTime = punch.getAdjustedtimestamp().toLocalTime();
                     continue;
 
                 case CLOCK_OUT:
+                    
                     if (clockedIn) {
                         long timeBetween = clockInTime.until(punch.getAdjustedtimestamp().toLocalTime(), ChronoUnit.MINUTES);
+                        
                         if (timeBetween >= shift.getLunchThreshold() && !(punch.isWeekend(punch.getAdjustedtimestamp()))) {
                             minutesWorked += timeBetween - lunchDuration;
+                            
                         } else {
+                            
                             minutesWorked += timeBetween;
                         }
                     }
+                    
                     break;
             }
         }
+        
         return (int) minutesWorked;
     }
     

@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 public class ShiftDAO {
 
-    // more descriptive names for queries
     private static final String QUERY_FIND = "SELECT * FROM shift WHERE id = ?";
     private static final String QUERY_FIND2 = "SELECT * FROM employee WHERE badgeid = ?";
 
@@ -80,9 +79,7 @@ public class ShiftDAO {
                         
                         shift = new Shift(shiftSet);
                     }
-
                 }
-
             }
 
         } catch (SQLException e) {
@@ -167,6 +164,5 @@ public class ShiftDAO {
         }
 
         return shift;
-
     }
 }

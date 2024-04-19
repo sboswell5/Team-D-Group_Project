@@ -11,15 +11,6 @@ import java.sql.*;
 public class AbsenteeismDAO {
 
     private static final String QUERY_FIND = "SELECT * FROM absenteeism WHERE employeeid = ? AND payperiod = ?";
-    //private static final String QUERY_REPLACE = "REPLACE INTO absenteeism (employeeid, payperiod, percentage) VALUES (?, ?, ?)"; // look into
-    
-    // possibly do delete if match and then insert if not exist
-    //private static final String QUERY_DELETE = "DELETE FROM absenteeism WHERE employeeid = ? AND payperiod = ?";
-    //private static final String QUERY_INSERT = "INSERT INTO absenteeism (employeeid, payperiod, percentage) VALUES (?, ?, ?)";
-
-    //private static final String QUERY_UPDATE = "UPDATE absenteeism SET percentage = ? WHERE employeeid = ? AND payperiod = ?";
-    
-    // Try this one?
     private static final String QUERY_UPDATE = "INSERT INTO absenteeism (employeeid, payperiod, percentage) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE percentage = ?";
     
     private final DAOFactory daoFactory;
@@ -72,16 +63,25 @@ public class AbsenteeismDAO {
         } finally {
 
             if (rs != null) {
+                
                 try {
+                    
                     rs.close();
+                    
                 } catch (SQLException e) {
+                    
                     throw new DAOException(e.getMessage());
                 }
             }
+            
             if (ps != null) {
+                
                 try {
+                    
                     ps.close();
+                    
                 } catch (SQLException e) {
+                    
                     throw new DAOException(e.getMessage());
                 }
             }
@@ -112,62 +112,6 @@ public class AbsenteeismDAO {
                 ps.executeUpdate();
             }
 
-                /*ps = conn.prepareStatement(QUERY_REPLACE);
-                
-                ps.setInt(1, absenteeism.getEmployee().getId());
-                ps.setDate(2, Date.valueOf(absenteeism.getLocalDate()));
-                ps.setBigDecimal(3, absenteeism.getBigDecimal());
-                
-                ps.executeUpdate();*/
-                
-                /*Absenteeism existingAbsenteeism = find(absenteeism.getEmployee(), absenteeism.getLocalDate());
-                
-                if (existingAbsenteeism != null) {
-                    
-                    BigDecimal newPercentage = absenteeism.getBigDecimal();
-                    LocalDate payPeriodStart = absenteeism.getLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
-                    
-                    ps = conn.prepareStatement(QUERY_UPDATE);
-                    
-                    ps.setBigDecimal(1, newPercentage);
-                    ps.setInt(2, absenteeism.getEmployee().getId());
-                    ps.setDate(3, Date.valueOf(payPeriodStart));
-                    
-                    ps.executeUpdate();
-                
-                } else {
-                    
-                    ps = conn.prepareStatement(QUERY_INSERT);
-                    LocalDate payPeriodStart = absenteeism.getLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
-                
-                    ps.setInt(1, absenteeism.getEmployee().getId());
-                    ps.setDate(2, Date.valueOf(payPeriodStart));
-                    ps.setBigDecimal(3, absenteeism.getBigDecimal());
-                    
-                    ps.executeUpdate();
-                }
-            }*/
-                
-                /*PreparedStatement dps = conn.prepareStatement(QUERY_DELETE);
-                PreparedStatement ips = conn.prepareStatement(QUERY_INSERT);
-                
-                LocalDate payPeriodStart = absenteeism.getLocalDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
-                
-                dps.setInt(1, absenteeism.getEmployee().getId());
-                dps.setDate(2, Date.valueOf(payPeriodStart));
-                
-                int deletedRows = dps.executeUpdate();
-            
-                if (deletedRows == 0) {
-                  
-                    ips.setInt(1, absenteeism.getEmployee().getId());
-                    ips.setDate(2, Date.valueOf(payPeriodStart));
-                    ips.setBigDecimal(3, absenteeism.getBigDecimal());
-                
-                    ips.executeUpdate();
-                }
-            }*/
-                
         } catch (SQLException e) {
 
             throw new DAOException(e.getMessage());

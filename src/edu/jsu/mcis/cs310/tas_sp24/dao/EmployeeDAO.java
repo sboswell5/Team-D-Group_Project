@@ -63,26 +63,8 @@ public class EmployeeDAO {
                         Shift shift = shiftDAO.find(rs.getInt("shiftid"));
 
                         int employeeTypeNum = rs.getInt("employeetypeid");
-                        EmployeeType employeeType = null;
+                        EmployeeType employeeType = EmployeeType.values()[employeeTypeNum];
                         
-                        // simplify
-                        switch(employeeTypeNum) {
-                            
-                            case 0:
-                                
-                                employeeType = EmployeeType.PART_TIME;
-                                break;
-
-                            case 1:
-                                
-                                employeeType = EmployeeType.FULL_TIME;
-                                break;
-
-                            default:
-                                
-                                throw new IllegalArgumentException("Invalid employeeType id: " + employeeType);
-                        }
-
                         employeeParams.put("id", id);
                         employeeParams.put("firstName", firstName);
                         employeeParams.put("middleName", middleName);
