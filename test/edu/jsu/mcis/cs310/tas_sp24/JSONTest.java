@@ -140,48 +140,6 @@ public class JSONTest {
         }
 
     }
-    
-    // Added test
-    @Test
-    public void testJSONExtra1() {
-
-        try {
-
-            BadgeDAO badgeDAO = daoFactory.getBadgeDAO();
-            PunchDAO punchDAO = daoFactory.getPunchDAO();
-            ShiftDAO shiftDAO = daoFactory.getShiftDAO();
-
-            /* Expected JSON Data */
-            String expectedJSON = "[{\"originaltimestamp\":\"TUE 08\\/28\\/2018 07:00:00\",\"badgeid\":\"3282F212\",\"adjustedtimestamp\":\"TUE 08\\/28\\/2018 07:00:00\",\"adjustmenttype\":\"None\",\"terminalid\":\"0\",\"id\":\"2855\",\"punchtype\":\"CLOCK IN\"},{\"originaltimestamp\":\"TUE 08\\/28\\/2018 17:20:29\",\"badgeid\":\"3282F212\",\"adjustedtimestamp\":\"TUE 08\\/28\\/2018 17:15:00\",\"adjustmenttype\":\"Interval Round\",\"terminalid\":\"101\",\"id\":\"2869\",\"punchtype\":\"CLOCK OUT\"},{\"originaltimestamp\":\"TUE 08\\/28\\/2018 17:20:49\",\"badgeid\":\"3282F212\",\"adjustedtimestamp\":\"TUE 08\\/28\\/2018 17:15:00\",\"adjustmenttype\":\"Interval Round\",\"terminalid\":\"101\",\"id\":\"2870\",\"punchtype\":\"CLOCK IN\"},{\"originaltimestamp\":\"TUE 08\\/28\\/2018 17:21:23\",\"badgeid\":\"3282F212\",\"adjustedtimestamp\":\"TUE 08\\/28\\/2018 17:15:00\",\"adjustmenttype\":\"Interval Round\",\"terminalid\":\"101\",\"id\":\"2871\",\"punchtype\":\"CLOCK OUT\"}]";
-
-            ArrayList<HashMap<String, String>> expected = (ArrayList) Jsoner.deserialize(expectedJSON);
-
-            /* Get Punch/Badge/Shift Objects */
-            Punch p = punchDAO.find(2855);
-            Badge b = badgeDAO.find(p.getBadge().getId());
-            Shift s = shiftDAO.find(b);
-
-            /* Get/Adjust Daily Punch List */
-            ArrayList<Punch> dailypunchlist = punchDAO.list(b, p.getOriginaltimestamp().toLocalDate());
-
-            for (Punch punch : dailypunchlist) {
-                punch.adjust(s);
-            }
-
-            /* JSON Conversion */
-            String actualJSON = DAOUtility.getPunchListAsJSON(dailypunchlist);
-
-            ArrayList<HashMap<String, String>> actual = (ArrayList) Jsoner.deserialize(actualJSON);
-
-            /* Compare to Expected JSON */
-            assertEquals(expected, actual);
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 
 
 }

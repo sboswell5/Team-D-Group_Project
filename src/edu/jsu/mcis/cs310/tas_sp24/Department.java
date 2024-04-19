@@ -7,7 +7,6 @@ public class Department {
     
     public Department(int id, String description, int terminalid) {
         this.id = id;
-        
         this.description = description;
         this.terminalid = terminalid;
     }
@@ -34,5 +33,7 @@ public class Department {
         s.append(", Terminal ID: ").append(terminalid);
         
         return s.toString();
+    
     }
+    
 }
