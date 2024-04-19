@@ -88,29 +88,11 @@ public class EmployeeDAO {
                         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                         LocalDateTime active = LocalDateTime.parse(rs.getString("active"), dtf);
                         Department department = departmentDAO.find(rs.getInt("departmentid"));
-                        Shift shift = shiftDAO.find(rs.getInt("id"));
+                        Shift shift = shiftDAO.find(rs.getInt("shiftid"));
 
                         int employeeTypeNum = rs.getInt("employeetypeid");
-                        EmployeeType employeeType = null;
+                        EmployeeType employeeType = EmployeeType.values()[employeeTypeNum];
                         
-                        // simplify
-                        switch(employeeTypeNum) {
-                            
-                            case 0:
-                                
-                                employeeType = EmployeeType.PART_TIME;
-                                break;
-
-                            case 1:
-                                
-                                employeeType = EmployeeType.FULL_TIME;
-                                break;
-
-                            default:
-                                
-                                throw new IllegalArgumentException("Invalid employeeType id: " + employeeType);
-                        }
-
                         employeeParams.put("id", id);
                         employeeParams.put("firstName", firstName);
                         employeeParams.put("middleName", middleName);

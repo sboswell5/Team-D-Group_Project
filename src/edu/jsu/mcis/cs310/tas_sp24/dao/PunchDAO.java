@@ -9,27 +9,53 @@ import java.time.*;
 import java.sql.*;
 import java.util.ArrayList;
 
-// Finished find();
-// Added default case to switch
-// Added create();
-// Added insertPunch(); to go along with create();
-// create() good now :)
-// list() for single day & range of days works
-
+/**
+ * Data Access Object for the punch (event) section of the database.
+ * @author Madelyn
+ * @author Kris
+ */
 public class PunchDAO {
     
+    /**
+     * query to insert a punch (event) into the database
+     */
     private static final String QUERY_INSERT = "INSERT INTO event (terminalid, badgeid, timestamp, eventtypeid) VALUES (?, ?, ?, ?)";
+    
+    /**
+     * query to find punch data from a punch id
+     */
     private static final String QUERY_FIND = "SELECT * FROM event WHERE id = ?";
+    
+    /**
+     * query to list punch data for a specific badge on a given day
+     */
     private static final String QUERY_LIST = "Select *, Date(`timestamp`) AS originaldate FROM `event` WHERE badgeid = ? HAVING originaldate = ? Order BY `timestamp`";
+    
+    /**
+     * query to list punch data for closing punch pairs for a specific badge on a given day
+     */
     private static final String QUERY_CLOSE_LIST = "Select *, Date(`timestamp`) AS originaldate FROM `event` WHERE badgeid = ? HAVING originaldate = ? Order BY `timestamp` LIMIT 1";
     
+    /**
+     * The DAOFactory instance used by this class.
+     */
     private final DAOFactory daoFactory;
 
+    /**
+     * Constructs a new PunchDAO in the DAOFactory
+     * @param daoFactory the DAOFactory instance used
+     */
     PunchDAO(DAOFactory daoFactory) {
 
         this.daoFactory = daoFactory;
     }
 
+    /**
+     * Finds the punch data for the given punch id.
+     * @param id the id of a given punch
+     * @return the Punch object corresponding to the id
+     * @author Madelyn
+     */
     public Punch find(int id) {
 
         Punch punch = null;
@@ -98,6 +124,12 @@ public class PunchDAO {
         return punch;
     }
     
+    /**
+     * Creates a new punch entry in the database and returns a result based on if it was successful or not.
+     * @param punch the Punch object to be created
+     * @return an integer indicating the result of the insert: 0 if the punch fails the authorization or if there was an error; 1 if the punch was inserted successfully
+     * @author Madelyn
+     */
     public int create(Punch punch) {
         
         int result = 0;
@@ -132,6 +164,12 @@ public class PunchDAO {
         return result;
     }
     
+    /**
+     * Inserts a new punch into the database and returns the id of that punch
+     * @param punch the Punch object to be inserted
+     * @return the id of the inserted punch
+     * @author Madelyn
+     */
     private int insertPunch(Punch punch) {
        
         PreparedStatement ps = null;
@@ -143,7 +181,6 @@ public class PunchDAO {
 
             if (conn.isValid(0)) {
 
-                // add query to top (string)
                 ps = conn.prepareStatement(QUERY_INSERT, Statement.RETURN_GENERATED_KEYS);
                 
                 ps.setInt(1, punch.getTerminalid());
@@ -199,7 +236,14 @@ public class PunchDAO {
         return 0;
     }
     
-    // First list() method for a single day
+    /**
+     * Retrieves a list of punches for a specific badge and day.
+     * @param badge the badge for which punches will be retrieved
+     * @param localDate the date for punches to be retrieved
+     * @return an ArrayList of Punch objects
+     * @author Madelyn
+     * @author Kris
+     */
     public ArrayList<Punch> list(Badge badge, LocalDate localDate) {
         
         PreparedStatement ps = null;
@@ -235,9 +279,8 @@ public class PunchDAO {
                         
                         punchList.add(punch);
                     }
-                    
-                    // don't assume even number of punches
-                    while (punchList.size()%2 != 0) {
+            
+                    while (punchList.size() % 2 != 0) {
                         
                         localDate = localDate.plusDays(1);
                         punchList.add(closeClockInPair(badge, localDate));
@@ -279,7 +322,13 @@ public class PunchDAO {
         return punchList;
     }
     
-    // This is for the punches that "time out" or "clock out" the next day following a "clock in" the previous day
+    /**
+     * Retrieves a punch that closes a clock-in pair that happens the day after a time-out or clock-out punch.
+     * @param badge the badge for which punches will be retrieved
+     * @param localDate the date for punches to be retrieved
+     * @return a punch that closes a clock-in pair
+     * @author Kris
+     */
     public Punch closeClockInPair(Badge badge, LocalDate localDate) {
         
         PreparedStatement ps = null;
@@ -349,15 +398,22 @@ public class PunchDAO {
         return punch;
     }
     
-    // Second list() method for a range of dates
-    // add query to ensure the loop isn't infinite (instead return empty list) if values were switched (RESOLVED)
+    /**
+     * Retrieves a list of punches for a specified range of dates.
+     * @param badge the badge for which punches will be retrieved
+     * @param begin the start date of the range
+     * @param end the end date of the range
+     * @return an ArrayList of punch Objects
+     * @author Madelyn
+     */
     public ArrayList<Punch> list(Badge badge, LocalDate begin, LocalDate end) {
         
         ArrayList<Punch> rangedPunchList = new ArrayList<>();
         
         // Check if begin date is after end date.
         if (begin.isAfter(end)){
-            // return empty list.
+            
+            // return empty list
             return rangedPunchList;
         }
         

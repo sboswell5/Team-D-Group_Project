@@ -16,12 +16,13 @@ import java.math.BigDecimal;
  */
 public final class DAOUtility {
     
+    /**
+     * Converts a list of Punch objects into a JSON string.
+     * @param dailypunchlist the list of Punch objects to be converted
+     * @return a JSON string with the list of Punch objects
+     * @author Madelyn
+     */
     public static String getPunchListAsJSON(ArrayList<Punch> dailypunchlist) {
-        
-        // Should iterate through the list (dailypunchlist)
-        // Copy the data for each punch into an ArrayList of HashMaps
-        // Encode as JSON string
-        // Return string to caller
         
         /* Create ArrayList Object */
         ArrayList<HashMap<String, String>> jsonData = new ArrayList<>();
@@ -36,8 +37,8 @@ public final class DAOUtility {
             punchData.put("terminalid", String.valueOf(dlp.getTerminalid()));
             punchData.put("punchtype", String.valueOf(dlp.getPunchtype()));
             punchData.put("adjustmenttype", String.valueOf(dlp.getAdjustmenttype()));
-            //punchData.put("originaltimestamp", String.valueOf(dlp.formatDate(dlp.getOriginaltimestamp())));
-            //punchData.put("adjustedtimestamp", String.valueOf(dlp.formatDate(dlp.getAdjustedtimestamp())));
+            punchData.put("originaltimestamp", String.valueOf(dlp.getOriginaltimestamp().format(dlp.formatter).toUpperCase()));
+            punchData.put("adjustedtimestamp", String.valueOf(dlp.getAdjustedtimestamp().format(dlp.formatter).toUpperCase()));
 
             /* Append HashMap to ArrayList */
             jsonData.add(punchData);
@@ -50,55 +51,117 @@ public final class DAOUtility {
         return json; 
     }
     
+    /**
+     * Converts a list of Punch objects and their total minutes and absenteeism into a JSON string.
+     * @param punchlist the list of Punch objects to be converted
+     * @param shift the shift of the employee who's punch is being used
+     * @return a JSON string with the list of Punch objects and their total minutes and absenteeism
+     * @author Madelyn
+     */
+    public static String getPunchListPlusTotalsAsJSON(ArrayList<Punch> punchlist, Shift shift) {
+        
+        /* Create ArrayList Object */
+        ArrayList<HashMap<String, String>> PunchListData = new ArrayList<>();
+        
+        /* Create Json Object */
+        JsonObject jsonData = new JsonObject();
+        
+        /* Calculate Total Minutes & Absenteeism */
+        int minutes = calculateTotalMinutes(punchlist, shift);
+        BigDecimal percentage = calculateAbsenteeism(punchlist, shift);
+        String absenteeism = String.format("%.2f%%", percentage);
+        
+        for (Punch p : punchlist) {
+            /* Create HashMap Object (one for every Punch!) */
+            HashMap<String, String> punchData = new HashMap<>();
+            
+            /* Add Punch Data to HashMap */
+            punchData.put("id", String.valueOf(p.getId()));
+            punchData.put("badgeid", String.valueOf(p.getBadge().getId()));
+            punchData.put("terminalid", String.valueOf(p.getTerminalid()));
+            punchData.put("punchtype", String.valueOf(p.getPunchtype()));
+            punchData.put("adjustmenttype", String.valueOf(p.getAdjustmenttype()));
+            punchData.put("originaltimestamp", String.valueOf(p.getOriginaltimestamp().format(p.formatter).toUpperCase()));
+            punchData.put("adjustedtimestamp", String.valueOf(p.getAdjustedtimestamp().format(p.formatter).toUpperCase()));
+
+            /* Append HashMap to ArrayList */
+            PunchListData.add(punchData);
+        }
+        
+        jsonData.put("punchlist", PunchListData);
+        jsonData.put("totalminutes", minutes);
+        jsonData.put("absenteeism", absenteeism);
+      
+        /* Encode into JSON String */
+        String json = Jsoner.serialize(jsonData);
+        
+        /* Return JSON String to caller */
+        return json; 
+    }
+
+    /**
+     * Calculates the total minutes worked by an employee for a given day.
+     * @param dailypunchlist the list of Punch objects
+     * @param shift the shift of the employee who's punch is being used
+     * @return the total minutes for a day
+     * @author Ryan
+     */
     public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift) {
         
-    // iterate through the collection of punches - totaling up the number of minutes between pairs of "clock in" and "clock out" punches
-        // minus lunch break deductions
-
-        LocalTime clockIn_time = null;
+        LocalTime clockInTime = null;
         long minutesWorked = 0;
-        boolean clockIn = false;
+        boolean clockedIn = false;
         long lunchDuration = shift.getLunchDuration().toMinutes();
-       
 
         for (Punch punch : dailypunchlist) {
+            
             switch (punch.getPunchtype()) {
+                
                 case CLOCK_IN:
-                    clockIn = true;
-                    clockIn_time = punch.getAdjustedtimestamp().toLocalTime();
+                    
+                    clockedIn = true;
+                    clockInTime = punch.getAdjustedtimestamp().toLocalTime();
                     continue;
 
                 case CLOCK_OUT:
-                    if (clockIn) {
-                        minutesWorked = clockIn_time.until(punch.getAdjustedtimestamp().toLocalTime(), ChronoUnit.MINUTES);
-                        if (minutesWorked >= shift.getLunchThreshold()) {
-                            minutesWorked -= lunchDuration;
+                    
+                    if (clockedIn) {
+                        long timeBetween = clockInTime.until(punch.getAdjustedtimestamp().toLocalTime(), ChronoUnit.MINUTES);
+                        
+                        if (timeBetween >= shift.getLunchThreshold() && !(punch.isWeekend(punch.getAdjustedtimestamp()))) {
+                            minutesWorked += timeBetween - lunchDuration;
+                            
                         } else {
-                            minutesWorked = clockIn_time.until(punch.getAdjustedtimestamp().toLocalTime(), ChronoUnit.MINUTES);
+                            
+                            minutesWorked += timeBetween;
                         }
                     }
+                    
                     break;
-/*
-                case TIME_OUT:
-                    System.out.println("Time out");
-                    break;
-                    */
-
             }
         }
-        return (int)minutesWorked;
-    // time between "clock in" and "time out" pairs should NOT be included in daily total (if it's a TIME_OUT)
-
-    // deduction for lunch should be made IF employee worked more than minimum minutes (even if they didn't clock out)
-        // deduction should NOT be made if employee didn't work enough minutes
         
+        return (int) minutesWorked;
     }
     
-    /*
+    /**
+     * Calculates the absenteeism for a given employee for a given period.
+     * @param punchlist the list of Punch objects representing daily punches
+     * @param s the shift of the employee who's absenteeism is being calculated
+     * @return the absenteeism percentage as a BigDecimal
+     * @author Madelyn
+     */
     public static BigDecimal calculateAbsenteeism(ArrayList<Punch> punchlist, Shift s) {
-        int scheduledMinutes = calculateTotalMinutes(shift), actualMinutes = calculateTotalMinutes(punch);
-        BigDecimal absenteeism = (scheduledMinutes / actualMinutes) - 100;
         
-        return absenteeism;
-    }*/
+        double actualMinutes = calculateTotalMinutes(punchlist, s);
+        double scheduledMinutes = 0; 
+        
+        for (int i = 1; i <= 5; i++) {
+            
+            scheduledMinutes += (s.getShiftDuration().toMinutes() - s.getLunchDuration().toMinutes());
+        }
+   
+        double absenteeism = ((scheduledMinutes - actualMinutes) / scheduledMinutes) * 100;
+        return BigDecimal.valueOf(absenteeism);
+    }
 }

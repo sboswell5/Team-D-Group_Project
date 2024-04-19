@@ -9,11 +9,9 @@ import java.util.HashMap;
 
 public class ShiftDAO {
 
-    // more descriptive names for queries
-    private static final String QUERY_GET_SHIFT = "SELECT * FROM shift WHERE id = ?";
-    private static final String QUERY_GET_EMPLOYEE = "SELECT * FROM employee WHERE badgeid = ?";
-    private static final String QUERY_GET_DAILYSCHEDULE = "SELECT * FROM dailyschedule WHERE id = ?";
-  
+    private static final String QUERY_FIND = "SELECT * FROM shift WHERE id = ?";
+    private static final String QUERY_FIND2 = "SELECT * FROM employee WHERE badgeid = ?";
+
     private final DAOFactory daoFactory;
 
     ShiftDAO(DAOFactory daoFactory) { 
@@ -155,14 +153,6 @@ public class ShiftDAO {
         }
 
         return shift;
-    }
-
-    private Shift find(Badge badge, LocalDate date) {
-
-        Shift shift = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
     }
     
     private DailySchedule findDailySchedule(int id) {

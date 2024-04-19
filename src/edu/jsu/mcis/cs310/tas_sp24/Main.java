@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 public class Main {
 
     public static void main(String[] args) {
-        //:)
+        
         // test database connectivity; get DAOs 
 
         DAOFactory daoFactory = new DAOFactory("tas.jdbc");
@@ -17,15 +17,14 @@ public class Main {
         DepartmentDAO departmentDAO = daoFactory.getDepartmentDAO();
         PunchDAO punchDAO = daoFactory.getPunchDAO();
         
-        // find badge
-
+        // Find badge
         Badge b = badgeDAO.find("C4F37EFF");
         
         System.err.println("Test Badge: " + b.toString());
         
         // output should be "Test Badge: #C4F37EFF (Welch, Travis C)"
         
-        //  find department
+        // Find department
         for(int i = 1; i <= 10 ; i++) {
             Department d = departmentDAO.find(i);
             System.err.println("Test Department: " + d.toString());
@@ -35,18 +34,12 @@ public class Main {
         System.err.println("Test Department: " + d1.toString());
         
         
-        // find punch
-        
+        // Find punch
         Punch p = punchDAO.find(236);
         System.err.println("Test Punch: " + p.toString());
         
         LocalDate ts = LocalDate.of(2018, Month.SEPTEMBER, 27);
         
         System.err.println(ts);
-        
-        // Testing the commit & push! - Madelyn
-        // Testing the commit & push! - Kris
-        //testing testing!!! 123 -shelby!
     }
-
 }
